@@ -15,9 +15,7 @@ import com.hepta.theptavpn.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     // Used to load the 'theptavpn' library on application startup.
-    static {
-        System.loadLibrary("theptavpn");
-    }
+
     private static final int VPN_REQUEST_CODE = 0x0F;
 
     private ActivityMainBinding binding;
@@ -31,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Example of a call to a native method
         TextView tv = binding.sampleText;
-        tv.setText(stringFromJNI());
+        tv.setText("hello world");
         binding.start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,5 +83,4 @@ public class MainActivity extends AppCompatActivity {
      * A native method that is implemented by the 'theptavpn' native library,
      * which is packaged with this application.
      */
-    public native String stringFromJNI();
 }

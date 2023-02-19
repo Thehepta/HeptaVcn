@@ -27,6 +27,15 @@ import java.util.concurrent.Executors;
 
 public class LocalVPNService extends VpnService
 {
+
+
+    static {
+        System.loadLibrary("theptavpn");
+    }
+
+
+    public native void setTunFd(int fd);
+    public native void startVpn();
     public static final String ACTION_DISCONNECT = "ACTION_DISCONNECT";
     private static final String TAG = LocalVPNService.class.getSimpleName();
     private static final String VPN_ADDRESS = "10.120.0.1"; // Only IPv4 support for now
@@ -61,6 +70,7 @@ public class LocalVPNService extends VpnService
             builder.addAddress(VPN_ADDRESS, 32);
             builder.addRoute(VPN_ROUTE, 0);
             vpnInterface = builder.setSession(getString(R.string.app_name)).setConfigureIntent(pendingIntent).establish();
+            Log.e(TAG,"fd:"+vpnInterface.getFd());
         }
     }
 
@@ -90,6 +100,8 @@ public class LocalVPNService extends VpnService
     private void connect() {
         isRunning = true;
         setupVPN();
+        setTunFd(vpnInterface.getFd());
+//        startVpn();
         try
         {
             udpSelector = Selector.open();
@@ -99,12 +111,12 @@ public class LocalVPNService extends VpnService
             networkToDeviceQueue = new ConcurrentLinkedQueue<>();
 
             executorService = Executors.newFixedThreadPool(5);
-            executorService.submit(new UDPInput(networkToDeviceQueue, udpSelector));
-            executorService.submit(new UDPOutput(deviceToNetworkUDPQueue, udpSelector, this));
-            executorService.submit(new TCPInput(networkToDeviceQueue, tcpSelector));
-            executorService.submit(new TCPOutput(deviceToNetworkTCPQueue, networkToDeviceQueue, tcpSelector, this));
-            executorService.submit(new VPNRunnable(vpnInterface.getFileDescriptor(),
-                    deviceToNetworkUDPQueue, deviceToNetworkTCPQueue, networkToDeviceQueue));
+//            executorService.submit(new UDPInput(networkToDeviceQueue, udpSelector));
+//            executorService.submit(new UDPOutput(deviceToNetworkUDPQueue, udpSelector, this));
+//            executorService.submit(new TCPInput(networkToDeviceQueue, tcpSelector));
+//            executorService.submit(new TCPOutput(deviceToNetworkTCPQueue, networkToDeviceQueue, tcpSelector, this));
+//            executorService.submit(new VPNRunnable(vpnInterface.getFileDescriptor(),
+//                    deviceToNetworkUDPQueue, deviceToNetworkTCPQueue, networkToDeviceQueue));
 //            LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(BROADCAST_VPN_STATE).putExtra("running", true));
             Log.i(TAG, "Started");
         }
@@ -209,11 +221,11 @@ public class LocalVPNService extends VpnService
                         Packet packet = new Packet(bufferToNetwork);
                         if (packet.isUDP())
                         {
-                            deviceToNetworkUDPQueue.offer(packet);
+//                            deviceToNetworkUDPQueue.offer(packet);
                         }
                         else if (packet.isTCP())
                         {
-                            deviceToNetworkTCPQueue.offer(packet);
+//                            deviceToNetworkTCPQueue.offer(packet);
                         }
                         else
                         {
@@ -227,24 +239,24 @@ public class LocalVPNService extends VpnService
                         dataSent = false;
                     }
 
-                    ByteBuffer bufferFromNetwork = networkToDeviceQueue.poll();
-                    if (bufferFromNetwork != null)
-                    {
-                        bufferFromNetwork.flip();
-                        while (bufferFromNetwork.hasRemaining())
-                            vpnOutput.write(bufferFromNetwork);
-                        dataReceived = true;
-
-                        ByteBufferPool.release(bufferFromNetwork);
-                    }
-                    else
-                    {
-                        dataReceived = false;
-                    }
+//                    ByteBuffer bufferFromNetwork = networkToDeviceQueue.poll();
+//                    if (bufferFromNetwork != null)
+//                    {
+//                        bufferFromNetwork.flip();
+//                        while (bufferFromNetwork.hasRemaining())
+//                            vpnOutput.write(bufferFromNetwork);
+//                        dataReceived = true;
+//
+//                        ByteBufferPool.release(bufferFromNetwork);
+//                    }
+//                    else
+//                    {
+//                        dataReceived = false;
+//                    }
 
                     // TODO: Sleep-looping is not very battery-friendly, consider blocking instead
                     // Confirm if throughput with ConcurrentQueue is really higher compared to BlockingQueue
-                    if (!dataSent && !dataReceived)
+                    if (!dataSent)
                         Thread.sleep(10);
                 }
             }

@@ -7,31 +7,21 @@ cmake_minimum_required(VERSION 3.22.1)
 
 # Declares and names the project.
 
-project("theptavpn")
+project("libevent")
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
-add_library( event2
-        STATIC
-        IMPORTED)
-
-set_target_properties( event2
-        PROPERTIES IMPORTED_LOCATION
-        ${CMAKE_SOURCE_DIR}/libevent/libs/${ANDROID_ABI}/libevent2.a)
-
-include_directories("./libevent/include")
-
 
 add_library( # Sets the name of the library.
-        theptavpn
+        libevent
 
         # Sets the library as a shared library.
         SHARED
 
         # Provides a relative path to your source file(s).
-        entry.cpp)
+        libevent.cpp)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -41,6 +31,7 @@ add_library( # Sets the name of the library.
 
 find_library( # Sets the name of the path variable.
         log-lib
+
         # Specifies the name of the NDK library that
         # you want CMake to locate.
         log)
@@ -50,8 +41,8 @@ find_library( # Sets the name of the path variable.
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries( # Specifies the target library.
-        theptavpn
-        event2
+        libevent
+
         # Links the target library to the log library
         # included in the NDK.
         ${log-lib})
