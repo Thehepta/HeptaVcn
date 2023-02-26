@@ -5,10 +5,56 @@
 #include <event2/event.h>
 #include "event2/bufferevent.h"
 #include "event2/buffer.h"
-
+#include "arpa/inet.h"
+#include "Sock5Client.h"
 #define LOG_TAG "theptavpn"
 
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+
+
+struct event_base * pEventBase = event_base_new();
+int tun_interface=-1;
+int sock;
+
+
+
+// 内存查看
+void hexDump(const unsigned char *data, size_t size)
+{
+    int i;
+    size_t offset = 0;
+    while (offset < size)
+    {
+        LOGE("%04x  ", offset);
+        for (i=0; i<16; i++)
+        {
+            if (i%8 == 0) putchar(' ');
+            if (offset+i < size)
+            {
+                LOGE("%02x ", data[offset + i]);
+            }
+            else
+            {
+                LOGE("   ");
+            }
+        }
+        LOGE("   ");
+        for (i=0; i<16 && offset+i<size; i++)
+        {
+            if (isprint(data[offset+i]))
+            {
+                LOGE("%c", data[offset+i]);
+            }
+            else
+            {
+                putchar('.');
+            }
+        }
+        putchar('\n');
+        offset += 16;
+    }
+}
+
 
 
 //读回调处理  服务的发送数据会自动调用这个函数
@@ -16,12 +62,21 @@
 void read_callback(struct bufferevent * pBufEv, void * pArg){
     //获取输入缓存
     struct evbuffer * pInput = bufferevent_get_input(pBufEv);
+
     //获取输入缓存数据的长度
     int nLen = evbuffer_get_length(pInput);
     //获取数据的地址
-//    const char * pBody = (const char *)evbuffer_pullup(pInput, nLen);
+    char * data = new char[nLen];
+    int read_len = bufferevent_read(pBufEv,data,nLen);
+    if(read_len != nLen){
+        LOGE("bufferevent_read error");
+    }
+    if(send(sock, data, nLen, 0) == -1)
+    {
+        LOGE("send error");
+    }
     LOGE("READ DATA %d",nLen);
-
+//    hexDump(reinterpret_cast<const unsigned char *>(pBody), nLen);
     //进行数据处理
 
     //写到输出缓存,由bufferevent的可写事件读取并通过fd发送
@@ -38,20 +93,38 @@ void event_callback(struct bufferevent * pBufEv, short sEvent, void * pArg)
     if(BEV_EVENT_CONNECTED == sEvent)
     {
         bufferevent_enable(pBufEv, EV_READ);
-    }
 
+    }
+    LOGE("event_callback");
     return ;
 }
 
 
-
-
-int tun_interface=-1;
 void *ThreadFun(void *arg)
 {
+
+
+    Sock5Client *sock5Client = new  Sock5Client();
+    sock5Client->socks5Config();
+    if (sock5Client->connect_server()){
+
+    }
     evutil_socket_t fd;
-    struct event_base * pEventBase = event_base_new();
     int error;
+
+    if((sock=socket(AF_INET,SOCK_STREAM,0))<0)
+    {
+        LOGE("socket create failed");
+    }
+    struct sockaddr_in tSockAddr;
+    memset(&tSockAddr, 0, sizeof(tSockAddr));
+    tSockAddr.sin_family = AF_INET;
+    tSockAddr.sin_addr.s_addr = inet_addr("192.168.0.105");
+    tSockAddr.sin_port = htons(50000);
+    if(connect(sock,(struct sockaddr*)&tSockAddr,sizeof(tSockAddr))<0){
+        LOGE("connect error");
+    }
+
     error = evutil_make_socket_nonblocking(tun_interface);
     if (error) {
         LOGE(LOG_TAG, "evutil_make_socket_nonblocking");
@@ -60,7 +133,6 @@ void *ThreadFun(void *arg)
     LOGE("open tun %d",tun_interface);
 
     bufferevent_setcb(pBufEv, read_callback, NULL, event_callback, NULL);
-
     bufferevent_enable(pBufEv, EV_READ | EV_PERSIST);
 
     //开始事件循环

@@ -3,6 +3,7 @@ package com.hepta.theptavpn;
 
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.VpnService;
 import android.os.ParcelFileDescriptor;
 
@@ -69,6 +70,13 @@ public class LocalVPNService extends VpnService
             Builder builder = new Builder();
             builder.addAddress(VPN_ADDRESS, 32);
             builder.addRoute(VPN_ROUTE, 0);
+            try {
+//                builder.addDisallowedApplication("com.android.chrome");  //禁止这个应用通过vpn访问网络，但是不禁止网络，就系vpn不存在一样，正常访问网络,可以设置多个
+                builder.addAllowedApplication("com.eg.android.AlipayGphone");  // 只允许这个应用通过vpn访问网络，其他应用不禁止网络，就系vpn不存在一样，正常访问网络，可以设置多个
+                builder.addAllowedApplication("com.tencent.mm");  //
+            } catch (PackageManager.NameNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             vpnInterface = builder.setSession(getString(R.string.app_name)).setConfigureIntent(pendingIntent).establish();
             Log.e(TAG,"fd:"+vpnInterface.getFd());
         }

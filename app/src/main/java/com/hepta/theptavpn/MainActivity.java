@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.hepta.theptavpn.databinding.ActivityMainBinding;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     // Used to load the 'theptavpn' library on application startup.
@@ -19,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int VPN_REQUEST_CODE = 0x0F;
 
     private ActivityMainBinding binding;
-
+    private List<String> pkgNameList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,10 +42,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.e("Rzx","stop");
-                startService(getServiceIntent().setAction(LocalVPNService.ACTION_DISCONNECT));
+                stopVpnService();
             }
         });
-
+        binding.select.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent().setClass (MainActivity.this, appListActivity.class));
+            }
+        });
 
     }
 
@@ -64,17 +71,20 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == VPN_REQUEST_CODE && resultCode == RESULT_OK)
         {
-            startService(getServiceIntent());
+            startVpnService();
         }
+
+
+    }
+    public void startVpnService() {
+        startService(getServiceIntent());
     }
 
-    @Override
-    public boolean stopService(Intent name) {
-        return super.stopService(name);
+    public void stopVpnService() {
+        startService(getServiceIntent().setAction(LocalVPNService.ACTION_DISCONNECT));
     }
 
     private Intent getServiceIntent() {
-
         return new Intent(getApplicationContext(), LocalVPNService.class);
 
     }

@@ -22,6 +22,7 @@ set_target_properties( event2
         ${CMAKE_SOURCE_DIR}/libevent/libs/${ANDROID_ABI}/libevent2.a)
 
 include_directories("./libevent/include")
+include_directories(".")
 
 
 add_library( # Sets the name of the library.
@@ -31,6 +32,7 @@ add_library( # Sets the name of the library.
         SHARED
 
         # Provides a relative path to your source file(s).
+        Sock5Client.cpp
         entry.cpp)
 
 # Searches for a specified prebuilt library and stores the path as a

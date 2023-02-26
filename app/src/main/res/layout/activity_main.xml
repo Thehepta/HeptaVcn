@@ -32,6 +32,29 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <RadioGroup
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:id="@+id/RadioButton1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="disable"
+                android:checked="true" />
+            <RadioButton
+                android:id="@+id/RadioButton2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="enable"/>
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/select"
+            android:text="选择app"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
 
