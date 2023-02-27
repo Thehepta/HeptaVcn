@@ -37,6 +37,8 @@
     written before Libevent 2.0 that used them.
  */
 
+#include "bufferevent.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

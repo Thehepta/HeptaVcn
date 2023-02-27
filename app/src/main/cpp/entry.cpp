@@ -168,10 +168,8 @@ Java_com_hepta_theptavpn_LocalVPNService_connect_1server(JNIEnv *env, jobject th
     const char * server_address = env->GetStringUTFChars(jserver_address, NULL);
     const char * server_port = env->GetStringUTFChars(jserver_port, NULL);
     Sock5Client *sock5Client = new Sock5Client(server_address,server_port);
-    sock5Client->socks5Config();
-    if (sock5Client->connect_server()){
+//    sock5Client->connect_server();
 
-    }
 
 
 

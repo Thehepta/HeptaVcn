@@ -90,7 +90,7 @@ public class LocalVPNService extends VpnService
             return START_NOT_STICKY;
         } else {
             String ServerAddress = intent.getStringExtra("serverAddress");
-            String ServerPort = intent.getStringExtra("ServerPort");
+            String ServerPort = intent.getStringExtra("serverPort");
             connect(ServerAddress,ServerPort);
             return START_STICKY;
         }
@@ -111,8 +111,8 @@ public class LocalVPNService extends VpnService
     private void connect(String serverAddress, String serverPort) {
         isRunning = true;
         connect_server(serverAddress,serverPort);
-        setupVPN();
-        setTunFd(vpnInterface.getFd());
+//        setupVPN();
+//        setTunFd(vpnInterface.getFd());
 //        startVpn();
 
     }

@@ -3,6 +3,7 @@
 //
 #include <jni.h>
 #include <android/log.h>
+#include "event2/bufferevent_struct.h"
 
 #ifndef THEPTAVPN_SOCK5CLIENT_H
 #define THEPTAVPN_SOCK5CLIENT_H
@@ -10,7 +11,6 @@
 #define LOG_TAG "theptavpn"
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
-class Sock5Client {
 
 
 struct NegotiationRequest {
@@ -20,6 +20,8 @@ struct NegotiationRequest {
 };
 
 
+class Sock5Client {
+
 
 
 public:
@@ -28,11 +30,13 @@ public:
     void socks5Config();
 
     int NewNegotiationRequest();
-    int Negotiate();
+    int Negotiate(bufferevent *pBufferevent);
     int connect_server();
 
 private:
-    
+    struct sockaddr_in server_socket;
+//    struct bufferevent* conn;
+
 };
 
 

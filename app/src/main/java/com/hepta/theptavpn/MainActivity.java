@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         binding.start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startVPN();
             }
         });
         binding.stop.setOnClickListener(new View.OnClickListener() {
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         String ServerAddress = mServerAddress.getText().toString();
         String ServerPort = mServerPort.getText().toString();
         intent.putExtra("serverAddress",ServerAddress);
-        intent.putExtra("serverPorts",ServerPort);
+        intent.putExtra("serverPort",ServerPort);
         startService(intent);
     }
 
