@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">TheptaVpn</string>
+    <string name="address">Server Address:</string>
+    <string name="port">Server Port:</string>
+    <string name="secret">Shared Secret:</string>
+    <string name="connect">Connect!</string>
+
+    <string name="connecting">ToyVPN is connecting...</string>
+    <string name="connected">ToyVPN is connected!</string>
+    <string name="disconnected">ToyVPN is disconnected!</string>
 </resources>

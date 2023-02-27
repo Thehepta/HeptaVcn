@@ -10,8 +10,18 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="3mm">
 
+
+    <TextView style="@style/item" android:text="@string/address"/>
+        <EditText style="@style/item" android:id="@+id/address"/>
+
+        <TextView style="@style/item" android:text="@string/port"/>
+        <EditText style="@style/item" android:id="@+id/port"/>
+
+
+        <Button style="@style/item" android:id="@+id/connect" android:text="@string/connect"/>
 
         <Button
             android:text="startvpn"
@@ -23,15 +33,6 @@
             android:text="stopvpn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-        <TextView
-            android:id="@+id/sample_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hello World!"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <RadioGroup
             android:orientation="horizontal"

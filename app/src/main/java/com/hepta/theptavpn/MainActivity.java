@@ -22,20 +22,22 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private List<String> pkgNameList;
+    private TextView mServerAddress;
+    private TextView mServerPort;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        mServerAddress = binding.address;
+        mServerPort = binding.port;
         // Example of a call to a native method
-        TextView tv = binding.sampleText;
-        tv.setText("hello world");
+
         binding.start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startVPN();
+
             }
         });
         binding.stop.setOnClickListener(new View.OnClickListener() {
@@ -51,6 +53,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent().setClass (MainActivity.this, appListActivity.class));
             }
         });
+
+
+
+
 
     }
 
@@ -77,16 +83,16 @@ public class MainActivity extends AppCompatActivity {
 
     }
     public void startVpnService() {
-        startService(getServiceIntent());
+        Intent intent = new Intent(getApplicationContext(), LocalVPNService.class);
+        String ServerAddress = mServerAddress.getText().toString();
+        String ServerPort = mServerPort.getText().toString();
+        intent.putExtra("serverAddress",ServerAddress);
+        intent.putExtra("serverPorts",ServerPort);
+        startService(intent);
     }
 
     public void stopVpnService() {
-        startService(getServiceIntent().setAction(LocalVPNService.ACTION_DISCONNECT));
-    }
-
-    private Intent getServiceIntent() {
-        return new Intent(getApplicationContext(), LocalVPNService.class);
-
+        startService(new Intent(getApplicationContext(), LocalVPNService.class).setAction(LocalVPNService.ACTION_DISCONNECT));
     }
 
     /**

@@ -23,7 +23,6 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.Selector;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 public class LocalVPNService extends VpnService
@@ -34,6 +33,8 @@ public class LocalVPNService extends VpnService
         System.loadLibrary("theptavpn");
     }
 
+
+    public native void connect_server(String serverAddress, String serverPort);
 
     public native void setTunFd(int fd);
     public native void startVpn();
@@ -88,7 +89,9 @@ public class LocalVPNService extends VpnService
             disconnect();
             return START_NOT_STICKY;
         } else {
-            connect();
+            String ServerAddress = intent.getStringExtra("serverAddress");
+            String ServerPort = intent.getStringExtra("ServerPort");
+            connect(ServerAddress,ServerPort);
             return START_STICKY;
         }
     }
@@ -105,36 +108,13 @@ public class LocalVPNService extends VpnService
         Log.i(TAG, "Stopped");
     }
 
-    private void connect() {
+    private void connect(String serverAddress, String serverPort) {
         isRunning = true;
+        connect_server(serverAddress,serverPort);
         setupVPN();
         setTunFd(vpnInterface.getFd());
 //        startVpn();
-        try
-        {
-            udpSelector = Selector.open();
-            tcpSelector = Selector.open();
-            deviceToNetworkUDPQueue = new ConcurrentLinkedQueue<>();
-            deviceToNetworkTCPQueue = new ConcurrentLinkedQueue<>();
-            networkToDeviceQueue = new ConcurrentLinkedQueue<>();
 
-            executorService = Executors.newFixedThreadPool(5);
-//            executorService.submit(new UDPInput(networkToDeviceQueue, udpSelector));
-//            executorService.submit(new UDPOutput(deviceToNetworkUDPQueue, udpSelector, this));
-//            executorService.submit(new TCPInput(networkToDeviceQueue, tcpSelector));
-//            executorService.submit(new TCPOutput(deviceToNetworkTCPQueue, networkToDeviceQueue, tcpSelector, this));
-//            executorService.submit(new VPNRunnable(vpnInterface.getFileDescriptor(),
-//                    deviceToNetworkUDPQueue, deviceToNetworkTCPQueue, networkToDeviceQueue));
-//            LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(BROADCAST_VPN_STATE).putExtra("running", true));
-            Log.i(TAG, "Started");
-        }
-        catch (IOException e)
-        {
-            // TODO: Here and elsewhere, we should explicitly notify the user of any errors
-            // and suggest that they stop the service, since we can't do it ourselves
-            Log.e(TAG, "Error starting service", e);
-            cleanup();
-        }
     }
 
     public static boolean isRunning()

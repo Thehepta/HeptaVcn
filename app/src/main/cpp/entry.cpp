@@ -102,13 +102,6 @@ void event_callback(struct bufferevent * pBufEv, short sEvent, void * pArg)
 
 void *ThreadFun(void *arg)
 {
-
-
-    Sock5Client *sock5Client = new  Sock5Client();
-    sock5Client->socks5Config();
-    if (sock5Client->connect_server()){
-
-    }
     evutil_socket_t fd;
     int error;
 
@@ -160,12 +153,26 @@ Java_com_hepta_theptavpn_LocalVPNService_setTunFd(JNIEnv *env, jobject thiz,int 
     tun_interface = interface;
     pthread_create(&tid, NULL, ThreadFun, NULL);
     LOGE("open tun %d",tun_interface);
-
-
-
 }
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_hepta_theptavpn_LocalVPNService_startVpn(JNIEnv *env, jobject thiz) {
     // TODO: implement startVpn()
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_hepta_theptavpn_LocalVPNService_connect_1server(JNIEnv *env, jobject thiz,
+                                                         jstring jserver_address,
+                                                         jstring jserver_port) {
+    // TODO: implement connect_server()
+    const char * server_address = env->GetStringUTFChars(jserver_address, NULL);
+    const char * server_port = env->GetStringUTFChars(jserver_port, NULL);
+    Sock5Client *sock5Client = new Sock5Client(server_address,server_port);
+    sock5Client->socks5Config();
+    if (sock5Client->connect_server()){
+
+    }
+
+
+
 }
