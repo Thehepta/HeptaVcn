@@ -58,6 +58,7 @@ void event_cb1(struct bufferevent *bev, short events, void * arg)
     }
     else if(events & BEV_EVENT_CONNECTED)
     {
+
         struct bufferevent* conn = static_cast<bufferevent *>(arg);
         uint8_t reply[2];
 //        bufferevent_enable(bev, EV_READ|EV_WRITE);
@@ -66,14 +67,6 @@ void event_cb1(struct bufferevent *bev, short events, void * arg)
         negotiationRequest.push_back(0x01);
         negotiationRequest.push_back(0x00);
         bufferevent_write(conn,negotiationRequest.data(),negotiationRequest.size());
-//        bufferevent_read(conn,reply,2);   //没法立即读取到返回的数据
-//        if(reply[0] == 0x5){
-//            LOGE("reply...5\n");
-//        }
-//        if(reply[1] == 0){
-//            LOGE("reply...0\n");
-//        }
-//        LOGE("已经连接了服务器.....\n");
         return ;
     }
 }
@@ -84,7 +77,9 @@ Sock5Client::Sock5Client(const char *string, const char *string1) {
     server_socket.sin_family = AF_INET;
     server_socket.sin_addr.s_addr = inet_addr(string);
     server_socket.sin_port = htons(atoi(string1));
-    connect_server();
+    if(connect_server()==0){
+
+    }
 }
 
 int Sock5Client::connect_server() {
@@ -101,9 +96,6 @@ int Sock5Client::connect_server() {
         LOGE("connect vpn success \n");
 //        //开始事件循环
         event_base_dispatch(base);
-
-
-
 //        //事件循环结束 资源清理
 //        bufferevent_free(conn);
 //        event_base_free(base);

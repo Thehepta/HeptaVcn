@@ -110,9 +110,9 @@ public class LocalVPNService extends VpnService
 
     private void connect(String serverAddress, String serverPort) {
         isRunning = true;
-        connect_server(serverAddress,serverPort);
+//        connect_server(serverAddress,serverPort);
 //        setupVPN();
-//        setTunFd(vpnInterface.getFd());
+        setTunFd(vpnInterface.getFd());
 //        startVpn();
 
     }

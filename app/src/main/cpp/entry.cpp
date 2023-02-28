@@ -14,7 +14,6 @@
 
 struct event_base * pEventBase = event_base_new();
 int tun_interface=-1;
-int sock;
 
 
 
@@ -60,6 +59,8 @@ void hexDump(const unsigned char *data, size_t size)
 //读回调处理  服务的发送数据会自动调用这个函数
 
 void read_callback(struct bufferevent * pBufEv, void * pArg){
+
+    int sock =(long)pArg;
     //获取输入缓存
     struct evbuffer * pInput = bufferevent_get_input(pBufEv);
 
@@ -93,7 +94,6 @@ void event_callback(struct bufferevent * pBufEv, short sEvent, void * pArg)
     if(BEV_EVENT_CONNECTED == sEvent)
     {
         bufferevent_enable(pBufEv, EV_READ);
-
     }
     LOGE("event_callback");
     return ;
@@ -104,6 +104,7 @@ void *ThreadFun(void *arg)
 {
     evutil_socket_t fd;
     int error;
+    int sock;
 
     if((sock=socket(AF_INET,SOCK_STREAM,0))<0)
     {
@@ -112,8 +113,8 @@ void *ThreadFun(void *arg)
     struct sockaddr_in tSockAddr;
     memset(&tSockAddr, 0, sizeof(tSockAddr));
     tSockAddr.sin_family = AF_INET;
-    tSockAddr.sin_addr.s_addr = inet_addr("192.168.0.105");
-    tSockAddr.sin_port = htons(50000);
+    tSockAddr.sin_addr.s_addr = inet_addr("192.168.0.100");
+    tSockAddr.sin_port = htons(8883);
     if(connect(sock,(struct sockaddr*)&tSockAddr,sizeof(tSockAddr))<0){
         LOGE("connect error");
     }
@@ -125,7 +126,7 @@ void *ThreadFun(void *arg)
     struct bufferevent * pBufEv = bufferevent_socket_new(pEventBase, tun_interface, 0);
     LOGE("open tun %d",tun_interface);
 
-    bufferevent_setcb(pBufEv, read_callback, NULL, event_callback, NULL);
+    bufferevent_setcb(pBufEv, read_callback, NULL, event_callback, (void *)sock);
     bufferevent_enable(pBufEv, EV_READ | EV_PERSIST);
 
     //开始事件循环
