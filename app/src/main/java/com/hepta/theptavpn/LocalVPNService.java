@@ -73,8 +73,8 @@ public class LocalVPNService extends VpnService
             builder.addRoute(VPN_ROUTE, 0);
             try {
 //                builder.addDisallowedApplication("com.android.chrome");  //禁止这个应用通过vpn访问网络，但是不禁止网络，就系vpn不存在一样，正常访问网络,可以设置多个
-                builder.addAllowedApplication("com.eg.android.AlipayGphone");  // 只允许这个应用通过vpn访问网络，其他应用不禁止网络，就系vpn不存在一样，正常访问网络，可以设置多个
-                builder.addAllowedApplication("com.tencent.mm");  //
+                builder.addAllowedApplication("com.hepta.vpntest");  // 只允许这个应用通过vpn访问网络，其他应用不禁止网络，就系vpn不存在一样，正常访问网络，可以设置多个
+//                builder.addAllowedApplication("com.tencent.mm");  //
             } catch (PackageManager.NameNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -111,7 +111,7 @@ public class LocalVPNService extends VpnService
     private void connect(String serverAddress, String serverPort) {
         isRunning = true;
 //        connect_server(serverAddress,serverPort);
-//        setupVPN();
+        setupVPN();
         setTunFd(vpnInterface.getFd());
 //        startVpn();
 

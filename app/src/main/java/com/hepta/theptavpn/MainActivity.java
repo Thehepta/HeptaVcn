@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     // Used to load the 'theptavpn' library on application startup.
 
     private static final int VPN_REQUEST_CODE = 0x0F;
+    private static final int APPLIST_REQUEST_CODE = 0x1F;
 
     private ActivityMainBinding binding;
     private List<String> pkgNameList;
@@ -33,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         mServerAddress = binding.address;
         mServerPort = binding.port;
         // Example of a call to a native method
+
+
 
         binding.start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         binding.select.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent().setClass (MainActivity.this, appListActivity.class));
+                startActivityForResult(new Intent().setClass (MainActivity.this, appListActivity.class),APPLIST_REQUEST_CODE);
             }
         });
 
@@ -74,20 +77,33 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+        Log.e("Rzx","onActivityResult");
+
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == VPN_REQUEST_CODE && resultCode == RESULT_OK)
         {
             startVpnService();
         }
+        if (requestCode == APPLIST_REQUEST_CODE && resultCode == RESULT_OK){
+            Log.e("Rzx","APPLIST_REQUEST_CODE");
+        }
+
 
 
     }
     public void startVpnService() {
+
+
         Intent intent = new Intent(getApplicationContext(), LocalVPNService.class);
         String ServerAddress = mServerAddress.getText().toString();
         String ServerPort = mServerPort.getText().toString();
         intent.putExtra("serverAddress",ServerAddress);
         intent.putExtra("serverPort",ServerPort);
+        if (binding.RadioDisable.isChecked()){
+            intent.putExtra("appDisable",true);
+        }else {
+            intent.putExtra("appDisable",false);
+        }
         startService(intent);
     }
 

@@ -30,6 +30,7 @@
 
         <activity
             android:name=".appListActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:exported="true">
         </activity>
 

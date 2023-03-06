@@ -4,8 +4,10 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
@@ -33,7 +35,13 @@ public class AppListAdapter extends BaseQuickAdapter<AppListAdapter.AppInfo, Bas
         baseViewHolder.setText(R.id.app_name, item.getAppName());
         baseViewHolder.setText(R.id.description, item.getPackageName());
         baseViewHolder.setImageDrawable(R.id.app_icon,item.getIcon());
-
+        SwitchCompat switchCompat = baseViewHolder.findView(R.id.switcher);
+        switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                item.setEnable(isChecked);
+            }
+        });
 //        ListItemRxmoduleBinding binding = DataBindingUtil.getBinding(baseViewHolder.itemView);
 //        if (binding != null) {
 //            binding.setModuleInfo(moduleInfo);   //setAppInfo 这个函数就是在xml 文件中设置的data variable 里的name,后面的类名和这里直接对应
@@ -71,5 +79,12 @@ public class AppListAdapter extends BaseQuickAdapter<AppListAdapter.AppInfo, Bas
             return icon;
         }
 
+        public boolean isEnable() {
+            return enable;
+        }
+
+        public void setEnable(boolean enable) {
+            this.enable = enable;
+        }
     }
 }

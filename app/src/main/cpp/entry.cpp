@@ -7,6 +7,8 @@
 #include "event2/buffer.h"
 #include "arpa/inet.h"
 #include "Sock5Client.h"
+#include "IP.h"
+
 #define LOG_TAG "theptavpn"
 
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
@@ -60,7 +62,7 @@ void hexDump(const unsigned char *data, size_t size)
 
 void read_callback(struct bufferevent * pBufEv, void * pArg){
 
-    int sock =(long)pArg;
+    int sock =(intptr_t)pArg;
     //获取输入缓存
     struct evbuffer * pInput = bufferevent_get_input(pBufEv);
 
@@ -69,19 +71,15 @@ void read_callback(struct bufferevent * pBufEv, void * pArg){
     //获取数据的地址
     char * data = new char[nLen];
     int read_len = bufferevent_read(pBufEv,data,nLen);
+    IP * packet = new IP(data,read_len);
     if(read_len != nLen){
         LOGE("bufferevent_read error");
     }
-    if(send(sock, data, nLen, 0) == -1)
-    {
-        LOGE("send error");
-    }
-    LOGE("READ DATA %d",nLen);
-//    hexDump(reinterpret_cast<const unsigned char *>(pBody), nLen);
-    //进行数据处理
 
     //写到输出缓存,由bufferevent的可写事件读取并通过fd发送
-    //bufferevent_write(pBufEv, pResponse, nResLen);
+    if(bufferevent_write(pBufEv, data, read_len)== -1){
+        LOGE("bufferevent_write error");
+    }
 
     return ;
 }
@@ -110,14 +108,15 @@ void *ThreadFun(void *arg)
     {
         LOGE("socket create failed");
     }
-    struct sockaddr_in tSockAddr;
-    memset(&tSockAddr, 0, sizeof(tSockAddr));
-    tSockAddr.sin_family = AF_INET;
-    tSockAddr.sin_addr.s_addr = inet_addr("192.168.0.100");
-    tSockAddr.sin_port = htons(8883);
-    if(connect(sock,(struct sockaddr*)&tSockAddr,sizeof(tSockAddr))<0){
-        LOGE("connect error");
-    }
+//    struct sockaddr_in tSockAddr;
+//    memset(&tSockAddr, 0, sizeof(tSockAddr));
+//    tSockAddr.sin_family = AF_INET;
+//    tSockAddr.sin_addr.s_addr = inet_addr("192.168.0.100");
+//    tSockAddr.sin_port = htons(8883);
+//    if(connect(sock,(struct sockaddr*)&tSockAddr,sizeof(tSockAddr))<0){
+//        LOGE("connect error");
+//        return nullptr;
+//    }
 
     error = evutil_make_socket_nonblocking(tun_interface);
     if (error) {

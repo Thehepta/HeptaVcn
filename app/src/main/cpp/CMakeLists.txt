@@ -25,6 +25,9 @@ include_directories("./libevent/include")
 include_directories(".")
 
 
+#set(ANDROID_STL "c++_shared")
+
+
 add_library( # Sets the name of the library.
         theptavpn
 
@@ -33,6 +36,11 @@ add_library( # Sets the name of the library.
 
         # Provides a relative path to your source file(s).
         Sock5Client.cpp
+        Tcp.cpp
+        Udp.cpp
+        Icmp.cpp
+        Tcb.cpp
+        IP.cpp
         entry.cpp)
 
 # Searches for a specified prebuilt library and stores the path as a
