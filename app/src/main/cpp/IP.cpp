@@ -8,7 +8,7 @@
 #include "Tcp.h"
 #include "Udp.h"
 #include "Icmp.h"
-
+#include "utils.h"
 IP::IP(char *data, int readlen) {
 
     unsigned short len;
@@ -16,36 +16,44 @@ IP::IP(char *data, int readlen) {
     unsigned short chksum2;
     int i;
     IPr = (struct ip_hdr *)data;
+    ihl = (IPr->verhl & 0x0F) * 4;
+
     if ((IPr->verhl & 0xF0) == IPv4) {
-        IPLOGE("IP: packet version is  ipv4\r\n");
+        IPLOGE("IP: packet version is  ipv4 and ihl=%d\r\n",ihl);
     } else if((IPr->verhl & 0xF0) == IPv6){
         IPLOGE("IP: packet version is  ipv6\r\n");
 
     }
-    ihl = (IPr->verhl & 0x0F) * 4;
     if ((IPr->verhl & 0x0F) != 0x05) {
         IPLOGE("IP: header options not supported!\r\n");
 //        return;
     }
-    if ((HTONS(IPr->fragment) & 0x1FFF) != 0x0000) {
+    if ((htons(IPr->fragment) & 0x1FFF) != 0x0000) {
         IPLOGE("IP: fragmented packets not supported!\r\n");
 //        return;
     }
     memcpy(&srcipaddr, &IPr->srcipaddr, 4);
     memcpy(&destipaddr, &IPr->destipaddr, 4);
-    chksum1 = HTONS(IPr->hdrchksum);
+    chksum1 = htons(IPr->hdrchksum);
     IPr->hdrchksum = 0;
-//    chksum2 = chksum16(&IPr->verhl, (IPr->verhl & 0x0F) * 4, 0, 1);
-
-    len = HTONS(IPr->len) - ihl; 		// Length of IP Data
+    chksum2 = chksum16(IPr, ihl, 0, 1);
+    if (chksum2 != chksum1) {
+        IPLOGE("IP: Bad Checksum %04x (it should be %04x)\n",chksum1, chksum2);
+        return;				  // returns if chksum failed!
+    }
+    IPr->hdrchksum = htons(chksum1);	  // restore checksum
+    len = htons(IPr->len) - ihl; 		// Length of IP Data
     switch (IPr->protocol) {
         case ICMP_PROTOCOL:
+            IPLOGE("IP: fragmented packets is icmp_process\r\n");
             icmp_process();
             break;
         case UDP_PROTOCOL:
+            IPLOGE("IP: fragmented packets is udp_process\r\n");
             udp_process();
             break;
         case TCP_PROTOCOL:
+            IPLOGE("IP: fragmented packets is tcp_process\r\n");
             tcp_process();
             break;
         default:				  // send Protocol Unreachable ICMP message
@@ -66,22 +74,51 @@ IP::IP(char *data, int readlen) {
 }
 
 void IP::tcp_process() {
-    auto * tcp = new Tcp(IPr);
-
+    auto * tcp = new Tcp(this->IPr);
+    uint8_t * tcp_head = tcp->retTcpPacket();
+    if(nullptr !=tcp_head){
+        createIPacketData(tcp_head);
+    }
 }
 
 void IP::icmp_process() {
-    auto * icmp = new Icmp(IPr);
+    auto * icmp = new Icmp(this->IPr);
 
 
 }
 
 void IP::udp_process() {
-    auto * udp = new Udp(IPr);
+    auto * udp = new Udp(this->IPr);
 
 }
 
-char IP::getData() {
-    return 0;
+uint8_t* IP::getData() {
+    return IPacketData;
+}
+
+void IP::createIPacketData(uint8_t *tcp_head) {
+    IPacketData_Length = sizeof(struct ip_hdr)+sizeof(struct tcp_hdr);
+    IPacketData = new uint8_t[sizeof(struct ip_hdr)+sizeof(struct tcp_hdr)];
+    struct  ip_hdr * IPt = reinterpret_cast<ip_hdr *>(IPacketData);
+//    struct  tcp_hdr * TcpPacketData_tcp_hdr = reinterpret_cast<tcp_hdr *>(tcp_head);
+
+    IPt->verhl=0x45;
+    IPt->tos=0x00;
+    IPt->len=htons(sizeof(struct tcp_hdr)+sizeof(struct ip_hdr));
+//    ipid++;
+    IPt->id =       IPr->id;
+    IPt->fragment=  IPr->fragment;
+    IPt->ttl=       IPr->ttl;
+    IPt->protocol=  IPr->protocol;
+    IPt->hdrchksum= 0;
+    memcpy(&IPt->destipaddr, &IPr->srcipaddr, 4);
+    memcpy(&IPt->srcipaddr, &IPr->destipaddr, 4);
+    IPt->hdrchksum = htons(chksum16(IPt, (IPt->verhl & 0x0F) * 4, 0, 1));
+    memcpy(IPacketData+sizeof(struct ip_hdr), tcp_head, sizeof(struct tcp_hdr));
+
+}
+
+int IP::getDataLength() {
+    return IPacketData_Length;
 }
 

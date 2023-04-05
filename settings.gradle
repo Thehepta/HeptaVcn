@@ -17,3 +17,4 @@ dependencyResolutionManagement {
 rootProject.name = "TheptaVpn"
 include ':app'
 include ':libevent'
+include ':ipvpn'

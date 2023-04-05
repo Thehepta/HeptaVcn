@@ -4,11 +4,11 @@ plugins {
 
 android {
     namespace 'com.hepta.ipvpn'
-    compileSdk 33
+    compileSdk 29
 
     defaultConfig {
         minSdk 24
-        targetSdk 33
+        targetSdk 29
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"

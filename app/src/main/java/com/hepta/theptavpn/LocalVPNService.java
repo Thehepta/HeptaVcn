@@ -71,6 +71,7 @@ public class LocalVPNService extends VpnService
             Builder builder = new Builder();
             builder.addAddress(VPN_ADDRESS, 32);
             builder.addRoute(VPN_ROUTE, 0);
+            builder.setMtu(1500);
             try {
 //                builder.addDisallowedApplication("com.android.chrome");  //禁止这个应用通过vpn访问网络，但是不禁止网络，就系vpn不存在一样，正常访问网络,可以设置多个
                 builder.addAllowedApplication("com.hepta.vpntest");  // 只允许这个应用通过vpn访问网络，其他应用不禁止网络，就系vpn不存在一样，正常访问网络，可以设置多个

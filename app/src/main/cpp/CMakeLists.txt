@@ -36,7 +36,9 @@ add_library( # Sets the name of the library.
 
         # Provides a relative path to your source file(s).
         Sock5Client.cpp
+        ThreadSafeQueue.cpp
         Tcp.cpp
+        utils.cpp
         Udp.cpp
         Icmp.cpp
         Tcb.cpp

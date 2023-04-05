@@ -44,7 +44,8 @@ class IP {
 public:
 
     IP(char *string, int i);
-    char getData();
+    uint8_t* getData();
+    int getDataLength();
 
     uint8_t     ver;		      // IP version and Header Length
     uint8_t     ihl;
@@ -57,12 +58,19 @@ public:
     uint16_t    hdrchksum;           // IP header Checksum
     in_addr		srcipaddr;        // source IP address
     in_addr		destipaddr;	      // destination IP address
-    struct ip_hdr * IPr;
     void tcp_process();
 
     void icmp_process();
 
     void udp_process();
+
+    void createIPacketData(uint8_t *pHdr);
+
+private:
+    uint8_t *  IPacketData= nullptr;
+    int IPacketData_Length;
+    struct ip_hdr * IPr;
+
 };
 
 

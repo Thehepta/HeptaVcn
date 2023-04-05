@@ -56,6 +56,9 @@
             android:text="选择app"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
+        <Button style="@style/item" android:id="@+id/curl" android:text="text"/>
+
     </LinearLayout>
 
 

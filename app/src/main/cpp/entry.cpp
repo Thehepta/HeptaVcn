@@ -75,11 +75,18 @@ void read_callback(struct bufferevent * pBufEv, void * pArg){
     if(read_len != nLen){
         LOGE("bufferevent_read error");
     }
-
-    //写到输出缓存,由bufferevent的可写事件读取并通过fd发送
-    if(bufferevent_write(pBufEv, data, read_len)== -1){
-        LOGE("bufferevent_write error");
+    uint8_t *ret_data = packet->getData();
+    if(ret_data != nullptr){
+        //写到输出缓存,由bufferevent的可写事件读取并通过fd发送
+        if(bufferevent_write(pBufEv, packet->getData(),packet->getDataLength())== -1){
+//    if(bufferevent_write(pBufEv, data,read_len)== -1){
+            LOGE("bufferevent_write error");
+        } else{
+            LOGE("bufferevent_write successful");
+        }
     }
+
+
 
     return ;
 }

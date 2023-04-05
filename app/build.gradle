@@ -59,6 +59,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     //RecyclerView
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.11'
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
 
     implementation 'commons-io:commons-io:2.5'
     

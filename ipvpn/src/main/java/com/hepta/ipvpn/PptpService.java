@@ -1,4 +1,13 @@
 package com.hepta.ipvpn;
 
-public class PptpService {
+import android.net.VpnService;
+import com.android.server.*;
+import java.io.IOException;
+
+class PptpService extends VpnService {
+
+
+
+
+
 }

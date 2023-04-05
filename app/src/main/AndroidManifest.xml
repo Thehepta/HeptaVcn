@@ -14,6 +14,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:name=".TheptaVapApp"
         android:extractNativeLibs="true"
         android:theme="@style/Theme.TheptaVpn"
         tools:targetApi="31">
