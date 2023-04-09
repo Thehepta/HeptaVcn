@@ -8,6 +8,7 @@
 #include "arpa/inet.h"
 #include "Sock5Client.h"
 #include "IP.h"
+#include "Config.h"
 
 #define LOG_TAG "theptavpn"
 
@@ -78,6 +79,7 @@ void read_callback(struct bufferevent * pBufEv, void * pArg){
     //获取输入缓存数据的长度
     int nLen = evbuffer_get_length(pInput);
     //获取数据的地址
+//    bufferevent_read_buffer()
     char * data = new char[nLen];
     int read_len = bufferevent_read(pBufEv,data,nLen);
     IP * packet = new IP(data,read_len);
@@ -109,7 +111,8 @@ void __on_close(struct bufferevent *bev, void *ctx)
         bufferevent_free(bev);
     }
 }
-void __on_send(struct bufferevent *bev, void *ctx)
+
+void __on_Read(struct bufferevent *bev, void *ctx)
 {
     struct bufferevent *partner = static_cast<bufferevent *>(ctx);
     struct evbuffer *src, *dst;
@@ -123,20 +126,11 @@ void __on_send(struct bufferevent *bev, void *ctx)
         evbuffer_drain(src, len);
         return;
     }
-    LOGE("__on_send len is %d \n", len);
+    LOGE("__on_Read len is %d \n", len);
 
     dst = bufferevent_get_output(partner);
     evbuffer_add_buffer(dst, src);
 
-    if (evbuffer_get_length(dst) >= MAX_OUTPUT) {
-        /* We're giving the other side data faster than it can
-         * pass it on.  Stop reading here until we have drained the
-         * other side to MAX_OUTPUT/2 bytes. */
-        LOGE("%d is full\n", bufferevent_getfd(bev));
-        bufferevent_setcb(partner, __on_recv, __on_drained, __on_error, bev);
-        bufferevent_setwatermark(partner, EV_WRITE, MAX_OUTPUT/2, MAX_OUTPUT);
-        bufferevent_disable(bev, EV_READ);
-    }
 }
 
 void __on_recv(struct bufferevent *bev, void *ctx)
@@ -146,9 +140,7 @@ void __on_recv(struct bufferevent *bev, void *ctx)
     size_t len;
     src = bufferevent_get_input(bev);
     len = evbuffer_get_length(src);
-    if(len == 0){
-        return;
-    }
+    const char * pBody = (const char *)evbuffer_pullup(src, len);
     if (!partner) {
         evbuffer_drain(src, len);
         return;
@@ -157,32 +149,8 @@ void __on_recv(struct bufferevent *bev, void *ctx)
 
     dst = bufferevent_get_output(partner);
     evbuffer_add_buffer(dst, src);
-
-    if (evbuffer_get_length(dst) >= MAX_OUTPUT) {
-        /* We're giving the other side data faster than it can
-         * pass it on.  Stop reading here until we have drained the
-         * other side to MAX_OUTPUT/2 bytes. */
-        LOGE("%d is full\n", bufferevent_getfd(bev));
-        bufferevent_setcb(partner, __on_recv, __on_drained, __on_error, bev);
-        bufferevent_setwatermark(partner, EV_WRITE, MAX_OUTPUT/2, MAX_OUTPUT);
-        bufferevent_disable(bev, EV_READ);
-    }
 }
 
-static void __on_drained(struct bufferevent *bev, void *ctx)
-{
-    LOGE("__on_drained");
-
-    struct bufferevent *partner = static_cast<bufferevent *>(ctx);
-
-    printf("%d no full\n", bufferevent_getfd(bev));
-    /* We were choking the other side until we drained our outbuf a bit.
-     * Now it seems drained. */
-    bufferevent_setcb(bev, __on_recv, NULL, __on_error, partner);
-    bufferevent_setwatermark(bev, EV_WRITE, 0, 0);
-    if (partner)
-        bufferevent_enable(partner, EV_READ);
-}
 
 void __on_error(struct bufferevent *bev, short what, void *ctx)
 {
@@ -234,11 +202,13 @@ void event_callback(struct bufferevent * RemoteBufEv, short sEvent, void * pArg)
         }
         struct bufferevent * LocalBufEv = bufferevent_socket_new(pEventBase, tun_interface, BEV_OPT_CLOSE_ON_FREE|BEV_OPT_DEFER_CALLBACKS);
 
-        bufferevent_setcb(RemoteBufEv, __on_recv, NULL, __on_error, LocalBufEv);
-        bufferevent_setcb(LocalBufEv, __on_send, NULL, __on_error, RemoteBufEv);
+        bufferevent_setcb(RemoteBufEv, __on_recv, nullptr, __on_error, LocalBufEv);
+        bufferevent_setcb(LocalBufEv, __on_Read, nullptr, __on_error, RemoteBufEv);
 
         bufferevent_enable(RemoteBufEv, EV_READ|EV_WRITE);
         bufferevent_enable(LocalBufEv, EV_READ|EV_WRITE);
+        bufferevent_setwatermark(RemoteBufEv, EV_READ|EV_WRITE, 48, 1500);
+        bufferevent_setwatermark(LocalBufEv, EV_READ|EV_WRITE, 48, 1500);
 
     }
     LOGE("event_callback");
@@ -251,6 +221,9 @@ void event_callback(struct bufferevent * RemoteBufEv, short sEvent, void * pArg)
 void *ThreadFun(void *arg)
 {
     struct bufferevent * pBufEv = NULL;
+
+
+    Config * config = new Config();
 
     //创建事件驱动句柄
     pEventBase = event_base_new();

@@ -4,7 +4,7 @@ public class NativeLib {
 
     // Used to load the 'libevent' library on application startup.
     static {
-        System.loadLibrary("libevent");
+        System.loadLibrary("libevent2");
     }
 
     /**

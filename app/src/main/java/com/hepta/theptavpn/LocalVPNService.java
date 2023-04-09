@@ -30,7 +30,7 @@ public class LocalVPNService extends VpnService
 
     public native void startProxyServer();
     public static final String ACTION_DISCONNECT = "ACTION_DISCONNECT";
-    private static int MTU = 1440;
+    private static int MTU = 1500;
 
     private PingReflector mPingReflector = null;
     private static final String TAG = LocalVPNService.class.getSimpleName();
