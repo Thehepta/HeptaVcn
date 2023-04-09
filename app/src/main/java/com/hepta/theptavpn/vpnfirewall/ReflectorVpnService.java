@@ -32,15 +32,15 @@ public class ReflectorVpnService extends VpnService {
     private static final String ACTION_VPN_IS_UP = "com.android.cts.vpnfirewall.VPN_IS_UP";
     private static final int NOTIFICATION_ID = 1;
     private static final String NOTIFICATION_CHANNEL_ID = TAG;
-    private static int MTU = 1799;
+    private static int MTU = 1500;
 
     private ParcelFileDescriptor mFd = null;
     private PingReflector mPingReflector = null;
     private ConnectivityManager mConnectivityManager = null;
     private ConnectivityManager.NetworkCallback mNetworkCallback = null;
 
-    public static final String RESTRICTION_ADDRESSES = "vpn.addresses";
-    public static final String RESTRICTION_ROUTES = "vpn.routes";
+    public static final String RESTRICTION_ADDRESSES = "10.120.0.1";
+    public static final String RESTRICTION_ROUTES = "0.0.0.0";
     public static final String RESTRICTION_ALLOWED = "vpn.allowed";
     public static final String RESTRICTION_DISALLOWED = "vpn.disallowed";
 
@@ -180,7 +180,7 @@ public class ReflectorVpnService extends VpnService {
         }
         Log.i(TAG, "Established, fd=" + mFd.getFd());
 
-        mPingReflector = new PingReflector(mFd.getFileDescriptor(), MTU);
+        mPingReflector = new PingReflector(mFd, MTU);
         mPingReflector.start();
     }
 
