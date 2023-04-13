@@ -2,12 +2,19 @@ package com.hepta.theptavpn;
 
 
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.VpnService;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.ParcelFileDescriptor;
 
 import android.util.Log;
+import android.view.WindowManager;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.hepta.theptavpn.vpnfirewall.PingReflector;
 
@@ -23,14 +30,14 @@ public class LocalVPNService extends VpnService
     static {
         System.loadLibrary("theptavpn");
     }
-    public native void connect_server(String serverAddress, String serverPort);
+    public native boolean connect_server(String serverAddress, String serverPort);
 
     public native void setConfig(int fd,int prorxType);
     public native void startVpn();
 
     public native void startProxyServer();
     public static final String ACTION_DISCONNECT = "ACTION_DISCONNECT";
-    private static int MTU = 1500;
+    private static int MTU = 1400;
 
     private PingReflector mPingReflector = null;
     private static final String TAG = LocalVPNService.class.getSimpleName();
@@ -101,7 +108,10 @@ public class LocalVPNService extends VpnService
 
     private void connect(String serverAddress, String serverPort) {
 
-//        connect_server(serverAddress,serverPort);
+        if(!connect_server(serverAddress,serverPort)){
+            showDialog("不能连接到服务");
+            return;
+        };
         setupVPN();
         setConfig(vpnInterface.getFd(),1);
 //        startVpn();
@@ -131,5 +141,14 @@ public class LocalVPNService extends VpnService
         } finally {
             vpnInterface = null;
         }
+    }
+
+    private void showDialog(String msg){
+        Handler handlerThree=new Handler(Looper.getMainLooper());
+        handlerThree.post(new Runnable(){
+            public void run(){
+                Toast.makeText(getApplicationContext() ,msg,Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

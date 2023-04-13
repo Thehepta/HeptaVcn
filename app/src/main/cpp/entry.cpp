@@ -9,6 +9,7 @@
 #include "Sock5Client.h"
 #include "IP.h"
 #include "Config.h"
+#include "ipReflect.h"
 
 #define LOG_TAG "theptavpn"
 
@@ -27,6 +28,7 @@ static void __on_error(struct bufferevent *bev, short what, void *ctx);
 struct event_base * pEventBase = event_base_new();
 int tun_interface=-1;
 
+char tmp[1500];
 
 
 // 内存查看
@@ -119,8 +121,13 @@ void __on_Read(struct bufferevent *bev, void *ctx)
     size_t len;
     src = bufferevent_get_input(bev);
     len = evbuffer_get_length(src);
-    if(len == 0){
-        return;
+    const char * pBody = (const char *)evbuffer_pullup(src, sizeof(struct ip_hdr));
+    if(pBody == nullptr){
+        LOGE("__on_Read pullup is nullptr");
+    }
+    ip_hdr *  IPr = (ip_hdr *) pBody;
+    if(htons(IPr->len) != len){
+        LOGE("__on_Read ip packet->len = %hu , pullup len is %d\n", htons(IPr->len),strlen(pBody));
     }
     if (!partner) {
         evbuffer_drain(src, len);
@@ -130,25 +137,45 @@ void __on_Read(struct bufferevent *bev, void *ctx)
 
     dst = bufferevent_get_output(partner);
     evbuffer_add_buffer(dst, src);
-
 }
 
 void __on_recv(struct bufferevent *bev, void *ctx)
 {
     struct bufferevent *partner = static_cast<bufferevent *>(ctx);
     struct evbuffer *src, *dst;
-    size_t len;
-    src = bufferevent_get_input(bev);
-    len = evbuffer_get_length(src);
-    const char * pBody = (const char *)evbuffer_pullup(src, len);
-    if (!partner) {
-        evbuffer_drain(src, len);
-        return;
-    }
-    LOGE("__on_recv len is %d \n", len);
+//    size_t len;
+//    src = bufferevent_get_input(bev);
+//    len = evbuffer_get_length(src);
+//    const char * pBody = (const char *)evbuffer_pullup(src, sizeof(struct ip_hdr));
+//    if(pBody == nullptr){
+//        LOGE("__on_recv pullup is nullptr \n");
+//    }
+//    ip_hdr *  IPr = (ip_hdr *) pBody;
+//    int ip_totle = htons(IPr->len);
+//    if(ip_totle != len){
+//        LOGE("__on_recv ip packet->len = %d eventbuffer len = %d \n", ip_totle,len);
+//        if(ip_totle > 1300){
+//            LOGE("__on_recv ip packet->len is error = %d \n", ip_totle);
+//        }
+//        size_t ret = bufferevent_read(bev,tmp,ip_totle);
+//        if(ret != ip_totle){
+//            LOGE("__on_recv bufferevent_read is error , read ret =  %d \n", ret);
+//            return;
+//        }
+//        bufferevent_write(partner,tmp,ip_totle);
+//
+//    } else{
+//        LOGE("__on_recv len is %d \n", len);
+//
+//    }
 
     dst = bufferevent_get_output(partner);
     evbuffer_add_buffer(dst, src);
+//    if (!partner) {
+//        evbuffer_drain(src, len);
+//        return;
+//    }
+
 }
 
 
@@ -195,6 +222,8 @@ void event_callback(struct bufferevent * RemoteBufEv, short sEvent, void * pArg)
     //成功连接通知事件
     if(BEV_EVENT_CONNECTED == sEvent)
     {
+        LOGE("BEV_EVENT_CONNECTED");
+
         int error;
         error = evutil_make_socket_nonblocking(tun_interface);
         if (error) {
@@ -207,8 +236,8 @@ void event_callback(struct bufferevent * RemoteBufEv, short sEvent, void * pArg)
 
         bufferevent_enable(RemoteBufEv, EV_READ|EV_WRITE);
         bufferevent_enable(LocalBufEv, EV_READ|EV_WRITE);
-        bufferevent_setwatermark(RemoteBufEv, EV_READ|EV_WRITE, 48, 1500);
-        bufferevent_setwatermark(LocalBufEv, EV_READ|EV_WRITE, 48, 1500);
+//        bufferevent_setwatermark(RemoteBufEv, EV_READ|EV_WRITE, 48, 1500);
+//        bufferevent_setwatermark(LocalBufEv, EV_READ|EV_WRITE, 48, 3000);
 
     }
     LOGE("event_callback");
@@ -216,40 +245,59 @@ void event_callback(struct bufferevent * RemoteBufEv, short sEvent, void * pArg)
 }
 
 
+void udp_text(){
 
+    char * ip_addr = "192.168.31.38";
+    struct sockaddr_in  remote;
+
+    memset(&remote, 0, sizeof(remote));
+    remote.sin_family = AF_INET;
+    remote.sin_addr.s_addr = inet_addr(ip_addr);
+    remote.sin_port = htons(55559);
+    int socket_fd; socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
+    socklen_t server_len = sizeof(struct sockaddr_in);
+    std::string str="hekko world";
+    char buff[1024];
+    while (1){
+        LOGE("connect send\n");
+        sleep(1);
+        sendto(socket_fd, str.c_str(), str.length(), 0, (struct sockaddr*)&remote, sizeof (struct sockaddr_in));
+    }
+}
 
 void *ThreadFun(void *arg)
 {
-    struct bufferevent * pBufEv = NULL;
 
+    ipReflect_start(tun_interface);
+//    udp_text();
 
-    Config * config = new Config();
-
-    //创建事件驱动句柄
-    pEventBase = event_base_new();
-    //创建socket类型的bufferevent
-    pBufEv = bufferevent_socket_new(pEventBase, -1, BEV_OPT_CLOSE_ON_FREE|BEV_OPT_DEFER_CALLBACKS);
-
-    //设置回调函数, 及回调函数的参数
-    struct sockaddr_in tSockAddr;
-    memset(&tSockAddr, 0, sizeof(tSockAddr));
-    tSockAddr.sin_family = AF_INET;
-    tSockAddr.sin_addr.s_addr = inet_addr("192.168.31.38");
-    tSockAddr.sin_port = htons(55559);
-
-    bufferevent_setcb(pBufEv, nullptr, nullptr, event_callback, NULL);
-
-    //连接服务器
-    if( bufferevent_socket_connect(pBufEv, (struct sockaddr*)&tSockAddr, sizeof(tSockAddr)) < 0)
-    {
-        return 0;
-    }
-
-    //开始事件循环
-    event_base_dispatch(pEventBase);
-    //事件循环结束 资源清理
-    bufferevent_free(pBufEv);
-    event_base_free(pEventBase);
+//    struct bufferevent * pBufEv = NULL;
+//
+//    //创建事件驱动句柄
+//    pEventBase = event_base_new();
+//    //创建socket类型的bufferevent
+//    pBufEv = bufferevent_socket_new(pEventBase, -1, BEV_OPT_CLOSE_ON_FREE|BEV_OPT_DEFER_CALLBACKS);
+//
+//    //设置回调函数, 及回调函数的参数
+//    struct sockaddr_in tSockAddr;
+//    memset(&tSockAddr, 0, sizeof(tSockAddr));
+//    tSockAddr.sin_family = AF_INET;
+//    tSockAddr.sin_addr.s_addr = inet_addr("192.168.31.38");
+//    tSockAddr.sin_port = htons(55559);
+//
+//    bufferevent_setcb(pBufEv, nullptr, nullptr, event_callback, NULL);
+//
+//    //连接服务器
+//    if( bufferevent_socket_connect(pBufEv, (struct sockaddr*)&tSockAddr, sizeof(tSockAddr)) < 0)
+//    {
+//        return 0;
+//    }
+//
+//    //开始事件循环
+//    event_base_dispatch(pEventBase);
+//    //事件循环结束 资源清理
+//    bufferevent_free(pBufEv);
+//    event_base_free(pEventBase);
 
 
 
@@ -282,6 +330,18 @@ Java_com_hepta_theptavpn_LocalVPNService_setConfig(JNIEnv *env, jobject thiz, in
     pthread_t tid;
     tun_interface = interface;
     pthread_create(&tid, NULL, ThreadFun, NULL);
+//    switch (fork()) {
+//        case -1:
+//            LOGE("fork vpn process failed");
+//            break;
+//        case 0:
+//            LOGE("fork vpn process success child pid = %d",getpid());
+//            exit(0);
+//            break;
+//        default:
+//            break;
+//    }
+
     LOGE("open tun %d",tun_interface);
 }
 extern "C"
@@ -290,15 +350,17 @@ Java_com_hepta_theptavpn_LocalVPNService_startVpn(JNIEnv *env, jobject thiz) {
     // TODO: implement startVpn()
 }
 extern "C"
-JNIEXPORT void JNICALL
+JNIEXPORT jboolean JNICALL
 Java_com_hepta_theptavpn_LocalVPNService_connect_1server(JNIEnv *env, jobject thiz,
                                                          jstring jserver_address,
                                                          jstring jserver_port) {
     // TODO: implement connect_server()
     const char * server_address = env->GetStringUTFChars(jserver_address, NULL);
     const char * server_port = env->GetStringUTFChars(jserver_port, NULL);
-    Sock5Client *sock5Client = new Sock5Client(server_address,server_port);
+//    Sock5Client *sock5Client = new Sock5Client(server_address,server_port);
 //    sock5Client->connect_server();
+
+    return true;
 
 
 

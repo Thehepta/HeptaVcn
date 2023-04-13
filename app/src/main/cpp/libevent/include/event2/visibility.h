@@ -1,5 +1,5 @@
+/* -*- Mode: C; tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
- * Copyright (c) 2000-2007 Niels Provos <provos@citi.umich.edu>
  * Copyright (c) 2007-2012 Niels Provos and Nick Mathewson
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,57 +24,44 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef EVENT2_DNS_STRUCT_H_INCLUDED_
-#define EVENT2_DNS_STRUCT_H_INCLUDED_
-
-/** @file event2/dns_struct.h
-
-  Data structures for dns.  Using these structures may hurt forward
-  compatibility with later versions of Libevent: be careful!
-
- */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifndef EVENT2_VISIBILITY_H_INCLUDED_
+#define EVENT2_VISIBILITY_H_INCLUDED_
 
 #include <event2/event-config.h>
-#ifdef EVENT__HAVE_SYS_TYPES_H
-#include <sys/types.h>
+
+#if defined(event_shared_EXPORTS) || \
+    defined(event_extra_shared_EXPORTS) || \
+    defined(event_core_shared_EXPORTS) || \
+    defined(event_pthreads_shared_EXPORTS) || \
+    defined(event_openssl_shared_EXPORTS)
+
+# if defined (__SUNPRO_C) && (__SUNPRO_C >= 0x550)
+#  define EVENT2_EXPORT_SYMBOL __global
+# elif defined __GNUC__
+#  define EVENT2_EXPORT_SYMBOL __attribute__ ((visibility("default")))
+# elif defined(_MSC_VER)
+#  define EVENT2_EXPORT_SYMBOL __declspec(dllexport)
+# else
+#  define EVENT2_EXPORT_SYMBOL /* unknown compiler */
+# endif
+
+#else /* event_*_EXPORTS */
+
+# define EVENT2_EXPORT_SYMBOL
+
+#endif /* event_*_EXPORTS */
+
+/** We need to dllimport event_debug_logging_mask_ into event_extra */
+#if defined(_MSC_VER)
+# if defined(event_core_shared_EXPORTS) /** from core export */
+#  define EVENT2_CORE_EXPORT_SYMBOL __declspec(dllexport)
+# elif defined(event_extra_shared_EXPORTS) || /** from extra import */ \
+       defined(EVENT_VISIBILITY_WANT_DLLIMPORT)
+#  define EVENT2_CORE_EXPORT_SYMBOL __declspec(dllimport)
+# endif
+#endif /* _MSC_VER */
+#if !defined(EVENT2_CORE_EXPORT_SYMBOL)
+# define EVENT2_CORE_EXPORT_SYMBOL EVENT2_EXPORT_SYMBOL
 #endif
-#ifdef EVENT__HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
 
-/* For int types. */
-#include <event2/util.h>
-
-/*
- * Structures used to implement a DNS server.
- */
-
-struct evdns_server_request {
-	int flags;
-	int nquestions;
-	struct evdns_server_question **questions;
-};
-struct evdns_server_question {
-	int type;
-#ifdef __cplusplus
-	int dns_question_class;
-#else
-	/* You should refer to this field as "dns_question_class".  The
-	 * name "class" works in C for backward compatibility, and will be
-	 * removed in a future version. (1.5 or later). */
-	int class;
-#define dns_question_class class
-#endif
-	char name[1];
-};
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* EVENT2_DNS_STRUCT_H_INCLUDED_ */
-
+#endif /* EVENT2_VISIBILITY_H_INCLUDED_ */

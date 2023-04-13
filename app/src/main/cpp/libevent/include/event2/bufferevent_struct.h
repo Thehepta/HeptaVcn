@@ -24,8 +24,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _EVENT2_BUFFEREVENT_STRUCT_H_
-#define _EVENT2_BUFFEREVENT_STRUCT_H_
+#ifndef EVENT2_BUFFEREVENT_STRUCT_H_INCLUDED_
+#define EVENT2_BUFFEREVENT_STRUCT_H_INCLUDED_
 
 /** @file event2/bufferevent_struct.h
 
@@ -37,17 +37,15 @@
     written before Libevent 2.0 that used them.
  */
 
-#include "bufferevent.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include <event2/event-config.h>
-#ifdef _EVENT_HAVE_SYS_TYPES_H
+#ifdef EVENT__HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
-#ifdef _EVENT_HAVE_SYS_TIME_H
+#ifdef EVENT__HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
 
@@ -115,4 +113,4 @@ struct bufferevent {
 }
 #endif
 
-#endif /* _EVENT2_BUFFEREVENT_STRUCT_H_ */
+#endif /* EVENT2_BUFFEREVENT_STRUCT_H_INCLUDED_ */

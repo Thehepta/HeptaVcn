@@ -3,7 +3,6 @@
 //
 #include <jni.h>
 #include <android/log.h>
-#include "event2/bufferevent_struct.h"
 
 #ifndef THEPTAVPN_SOCK5CLIENT_H
 #define THEPTAVPN_SOCK5CLIENT_H
@@ -30,7 +29,7 @@ public:
     void socks5Config();
 
     int NewNegotiationRequest();
-    int Negotiate(bufferevent *pBufferevent);
+//    int Negotiate(bufferevent *pBufferevent);
     int connect_server();
 
 private:

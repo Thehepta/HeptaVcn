@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2000-2007 Niels Provos <provos@citi.umich.edu>
  * Copyright (c) 2007-2012 Niels Provos and Nick Mathewson
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,57 +23,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef EVENT2_DNS_STRUCT_H_INCLUDED_
-#define EVENT2_DNS_STRUCT_H_INCLUDED_
+#ifndef EVENT1_EVUTIL_H_INCLUDED_
+#define EVENT1_EVUTIL_H_INCLUDED_
 
-/** @file event2/dns_struct.h
+/** @file evutil.h
 
-  Data structures for dns.  Using these structures may hurt forward
-  compatibility with later versions of Libevent: be careful!
+  Utility and compatibility functions for Libevent.
 
- */
+  The <evutil.h> header is deprecated in Libevent 2.0 and later; please
+  use <event2/util.h> instead.
+*/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include <event2/event-config.h>
-#ifdef EVENT__HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef EVENT__HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
-
-/* For int types. */
 #include <event2/util.h>
 
-/*
- * Structures used to implement a DNS server.
- */
-
-struct evdns_server_request {
-	int flags;
-	int nquestions;
-	struct evdns_server_question **questions;
-};
-struct evdns_server_question {
-	int type;
-#ifdef __cplusplus
-	int dns_question_class;
-#else
-	/* You should refer to this field as "dns_question_class".  The
-	 * name "class" works in C for backward compatibility, and will be
-	 * removed in a future version. (1.5 or later). */
-	int class;
-#define dns_question_class class
-#endif
-	char name[1];
-};
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* EVENT2_DNS_STRUCT_H_INCLUDED_ */
-
+#endif /* EVENT1_EVUTIL_H_INCLUDED_ */

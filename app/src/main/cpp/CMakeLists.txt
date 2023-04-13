@@ -13,15 +13,15 @@ project("theptavpn")
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
-add_library( event2
+add_library( event
         STATIC
         IMPORTED)
 
-set_target_properties( event2
+set_target_properties( event
         PROPERTIES IMPORTED_LOCATION
-        ${CMAKE_SOURCE_DIR}/libevent/libs/${ANDROID_ABI}/libevent2.a)
+        ${CMAKE_SOURCE_DIR}/libevent/libs/${ANDROID_ABI}/libevent.a)
 
-include_directories("./libevent/include")
+include_directories("libevent/include")
 include_directories(".")
 
 
@@ -43,6 +43,7 @@ add_library( # Sets the name of the library.
         Icmp.cpp
         Tcb.cpp
         IP.cpp
+        ipReflect.cpp
         ProxyServer.cpp
         entry.cpp)
 
@@ -64,7 +65,7 @@ find_library( # Sets the name of the path variable.
 
 target_link_libraries( # Specifies the target library.
         theptavpn
-        event2
+        event
         # Links the target library to the log library
         # included in the NDK.
         ${log-lib})

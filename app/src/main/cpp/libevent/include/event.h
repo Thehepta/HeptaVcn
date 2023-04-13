@@ -24,14 +24,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef EVENT2_DNS_STRUCT_H_INCLUDED_
-#define EVENT2_DNS_STRUCT_H_INCLUDED_
+#ifndef EVENT1_EVENT_H_INCLUDED_
+#define EVENT1_EVENT_H_INCLUDED_
 
-/** @file event2/dns_struct.h
+/** @file event.h
 
-  Data structures for dns.  Using these structures may hurt forward
-  compatibility with later versions of Libevent: be careful!
+  A library for writing event-driven network servers.
 
+  The <event.h> header is deprecated in Libevent 2.0 and later; please
+  use <event2/event.h> instead.  Depending on what functionality you
+  need, you may also want to include more of the other event2/
+  headers.
  */
 
 #ifdef __cplusplus
@@ -45,36 +48,36 @@ extern "C" {
 #ifdef EVENT__HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
+#ifdef EVENT__HAVE_STDINT_H
+#include <stdint.h>
+#endif
+#include <stdarg.h>
 
 /* For int types. */
-#include <event2/util.h>
+#include <evutil.h>
 
-/*
- * Structures used to implement a DNS server.
- */
-
-struct evdns_server_request {
-	int flags;
-	int nquestions;
-	struct evdns_server_question **questions;
-};
-struct evdns_server_question {
-	int type;
-#ifdef __cplusplus
-	int dns_question_class;
-#else
-	/* You should refer to this field as "dns_question_class".  The
-	 * name "class" works in C for backward compatibility, and will be
-	 * removed in a future version. (1.5 or later). */
-	int class;
-#define dns_question_class class
+#ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
 #endif
-	char name[1];
-};
+#include <winsock2.h>
+#include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
+#endif
+
+#include <event2/event_struct.h>
+#include <event2/event.h>
+#include <event2/event_compat.h>
+#include <event2/buffer.h>
+#include <event2/buffer_compat.h>
+#include <event2/bufferevent.h>
+#include <event2/bufferevent_struct.h>
+#include <event2/bufferevent_compat.h>
+#include <event2/tag.h>
+#include <event2/tag_compat.h>
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* EVENT2_DNS_STRUCT_H_INCLUDED_ */
-
+#endif /* EVENT1_EVENT_H_INCLUDED_ */

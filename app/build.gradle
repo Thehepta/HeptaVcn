@@ -17,7 +17,7 @@ android {
 
         externalNativeBuild {
             cmake {
-                cppFlags ""
+                cppFlags "-Wl,-Bsymbolic"
             }
             ndk {
                 abiFilters 'armeabi-v7a','arm64-v8a'           //写在这里

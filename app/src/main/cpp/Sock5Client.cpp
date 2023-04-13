@@ -113,9 +113,9 @@ int Sock5Client::NewNegotiationRequest() {
     return 0;
 }
 
-int Sock5Client::Negotiate(bufferevent *conn) {
-
-
-
-    return 0;
-}
+//int Sock5Client::Negotiate(bufferevent *conn) {
+//
+//
+//
+//    return 0;
+//}
