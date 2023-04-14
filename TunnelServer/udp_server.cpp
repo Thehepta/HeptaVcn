@@ -2,30 +2,27 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
-#include <netdb.h>
-#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <csignal>
 #include "tool.h"
-
-#define MAX_LEN 1000
-#define TCP_PORT 55540
-#define UDP_PORT 55550
-
 #include <iostream>
 #include <event2/event.h>
 #include <event2/bufferevent.h>
 #include <linux/if_tun.h>
 #include <net/if.h>
+#include <event2/buffer.h>
+#include <arpa/inet.h>
+
+#define TCP_PORT 55540
+#define UDP_PORT 55550
+
+
+#define PORT_START 5000
+#define PORT_END 50000
+
 
 using namespace std;
-int str_to_number(const char* str);
-int tun_fd = -1;
-char buffer[1500];
-char buffer2[1500];
 
-
-void process(int sock_status_fd, int i);
 
 int tun_alloc(char *dev, int flags) {
 
@@ -58,11 +55,118 @@ int tun_alloc(char *dev, int flags) {
 }
 
 
+
+
+
+void __on_error(evutil_socket_t sockfd, short event, void* arg) {
+
+    cout<<"__on_error"<< event<<endl;
+    exit(0);
+}
+void __on_error(struct bufferevent *bev, short what, void *ctx) {
+
+}
+
+
+int  create_socket_bind(int &ret_fd,short sin_family,int sin_addr,int default_port){
+
+    struct sockaddr_in src_addr;
+    bzero(&src_addr,sizeof (sockaddr_in));
+    src_addr.sin_family          = sin_family;
+    src_addr.sin_addr.s_addr     = htonl(sin_addr);
+
+    int i_random_port=0;
+    time_t t;
+    char psz_port_cmd[256];
+    srand((unsigned)time(&t));
+
+    if(default_port != 0){
+        src_addr.sin_port            = htons(default_port);
+        if(bind(ret_fd, (sockaddr*)&src_addr, sizeof (src_addr))==0){
+            cout<<"bind successful"<<endl;
+            return  default_port;
+        }
+    }
+
+    while(1)
+    {
+        i_random_port = rand() % (PORT_END - PORT_START + 1) + PORT_START;
+        sprintf(psz_port_cmd, "netstat -an | grep :%d > /dev/null", i_random_port);
+        if( system(psz_port_cmd))
+        {
+            src_addr.sin_port            = htons(i_random_port);
+            if(bind(ret_fd, (sockaddr*)&src_addr, sizeof (src_addr))==0){
+                cout<<"bind successful"<<endl;
+                break;
+            }
+            continue;
+        }
+    }
+    return i_random_port;
+}
+
+void __on_recv(struct bufferevent *read, void *ctx)
+{
+    struct bufferevent *write = static_cast<bufferevent *>(ctx);
+    struct evbuffer *src, *dst;
+    src = bufferevent_get_input(read);
+    dst = bufferevent_get_output(write);
+    evbuffer_add_buffer(dst, src);
+}
+
+void process(int sock_status_fd, int tun_fd) {
+    cout<<"start process:"<<getpid()<<endl;
+    int flag_srandom = read_int(sock_status_fd);
+    write_int(sock_status_fd, flag_srandom);
+    int udp_sockfd = socket(PF_INET, SOCK_DGRAM, 0);
+    int port = create_socket_bind(udp_sockfd, AF_INET, INADDR_ANY, UDP_PORT);
+    write_int(sock_status_fd,port);
+    struct sockaddr_in dst_addr;
+    socklen_t socklen = sizeof(sockaddr_in);
+    int flag_srandom2;
+    int count = recvfrom(udp_sockfd, &flag_srandom2, sizeof(int), 0, (sockaddr*)&dst_addr, &socklen );
+    if(count > 0 && flag_srandom == flag_srandom2){
+        if(connect(udp_sockfd, (struct sockaddr *) &dst_addr, socklen) > 0){
+            perror("connect() error");
+            exit(0);
+        } else{
+            cout<<"udp recvform ip:"<<inet_ntoa(dst_addr.sin_addr)<<endl;
+            cout<<"udp recvform port:"<<dst_addr.sin_port<<endl;
+
+        }
+    }
+    struct event_base* evbase = event_base_new();
+
+
+    struct bufferevent *Tun_BufEv, *UdpBufEv;
+    struct event* ev_tcp = nullptr;
+
+    UdpBufEv = bufferevent_socket_new(evbase, udp_sockfd,
+                                         BEV_OPT_CLOSE_ON_FREE|BEV_OPT_DEFER_CALLBACKS);
+
+    Tun_BufEv = bufferevent_socket_new(evbase, tun_fd,
+                                      BEV_OPT_CLOSE_ON_FREE|BEV_OPT_DEFER_CALLBACKS);
+
+    bufferevent_setcb(UdpBufEv, __on_recv, NULL, __on_error, Tun_BufEv);
+    bufferevent_setcb(Tun_BufEv, __on_recv, NULL, __on_error, UdpBufEv);
+    ev_tcp = event_new(evbase, sock_status_fd, EV_CLOSED, __on_error, nullptr);
+
+    bufferevent_enable(UdpBufEv, EV_READ | EV_PERSIST);
+    bufferevent_enable(Tun_BufEv, EV_READ | EV_PERSIST);
+    event_base_set(evbase, ev_tcp);
+    event_add(ev_tcp, nullptr);
+    event_base_dispatch(evbase);
+    event_base_free(evbase);
+
+
+}
+
+
 int main(int argc, char** argv){
 
     char if_name[IFNAMSIZ] = "tun111";
+    int sock_fd, tun_fd ,net_fd,option;
 
-    int sock_fd, net_fd,optval = -1;
 
     struct sockaddr_in local,client;
     socklen_t remotelen;
@@ -77,16 +181,9 @@ int main(int argc, char** argv){
         perror("socket()");
         exit(1);
     }
-    socklen_t socklen;
-    memset(&local, 0, sizeof(local));
-    local.sin_family = AF_INET;
-    local.sin_addr.s_addr = htonl(INADDR_ANY);
-    local.sin_port = htons(TCP_PORT);
-    if (bind(sock_fd, (struct sockaddr*) &local, sizeof (struct sockaddr)) < 0) {
-        perror("bind()");
-        exit(1);
-    }
 
+    int port = create_socket_bind(sock_fd,AF_INET,INADDR_ANY,TCP_PORT);
+    cout<<"port:"<<port<<endl;
     if (listen(sock_fd, 5) < 0) {
         perror("listen()");
         exit(1);
@@ -103,135 +200,4 @@ int main(int argc, char** argv){
             process(net_fd, tun_fd);
         }
     }
-}
-
-
-void __on_error(evutil_socket_t sockfd, short event, void* arg) {
-
-    cout<<"__on_error"<< event<<endl;
-    exit(0);
-
-//    struct bufferevent *partner = static_cast<bufferevent *>(ctx);
-
-}
-void udpconn_cb2(evutil_socket_t tap_fd, short event, void* arg) {
-    int sockfd = (intptr_t)arg;
-    ssize_t count =  read(tap_fd, buffer2, 1500);
-    write(sockfd,buffer2,count);
-    cout<<"udpconn_cb2服务器从客户端接收的数据len:"<<count<<endl;
-}
-void udpconn_cb(evutil_socket_t sockfd, short event, void* arg) {
-    int tun_fd = (intptr_t)arg;
-    ssize_t count =  read(sockfd, buffer, 1500);
-    write(tun_fd, buffer, count);
-    cout<<"udpconn_cb服务器从客户端接收的数据len:"<<count<<endl;
-}
-
-void *UDPHandle(void *arg) {
-    char msg[128];
-    size_t len = sizeof(struct sockaddr);
-    int sockfd = (intptr_t)arg;
-
-
-    struct event* ev_udp = nullptr;
-    struct event* ev_tap = nullptr;
-    struct event_base* evbase = event_base_new();
-    ev_udp = event_new(evbase, sockfd, EV_READ |EV_PERSIST, udpconn_cb, (void *)tun_fd);
-    ev_tap = event_new(evbase, tun_fd, EV_READ | EV_PERSIST, udpconn_cb2, (void *)sockfd);
-
-
-    event_base_set(evbase, ev_udp);
-    event_base_set(evbase, ev_tap);
-    event_add(ev_udp, nullptr);
-    event_add(ev_tap, nullptr);
-    event_base_dispatch(evbase);
-    close(sockfd);
-}
-
-
-int  create_udp_socket(int &ret_fd,short sin_family,int sin_addr){
-
-    struct sockaddr_in src_addr;
-    bzero(&src_addr,sizeof (sockaddr_in));
-    src_addr.sin_family          = AF_INET;
-    src_addr.sin_port            = htons(UDP_PORT);
-    src_addr.sin_addr.s_addr     = htonl(INADDR_ANY);
-
-    int sockfd = socket(PF_INET, SOCK_DGRAM, 0);
-
-    if(bind(sockfd, (sockaddr*)&src_addr, sizeof (src_addr))<0){
-        cout<<"bind failed"<<endl;
-        perror("123456");
-    }
-    ret_fd = sockfd;
-    return src_addr.sin_port;
-}
-
-void process(int sock_status_fd, int tap_fd) {
-    cout<<"start process:"<<getpid()<<endl;
-    int port = UDP_PORT;
-    int flag_srandom = read_int(sock_status_fd);
-    write_int(sock_status_fd, flag_srandom);
-    write_int(sock_status_fd,port);
-    struct sockaddr_in src_addr,dst_addr;    //用于指定本地监听信息
-    bzero(&src_addr,sizeof (sockaddr_in));
-    src_addr.sin_family          = AF_INET;
-    src_addr.sin_port            = htons(UDP_PORT);
-    src_addr.sin_addr.s_addr     = htonl(INADDR_ANY);
-
-    cout<<"port:"<<htons(src_addr.sin_port)<<endl;
-    cout<<"addr:"<<inet_ntoa(src_addr.sin_addr)<<endl;
-
-
-    int sockfd = socket(PF_INET, SOCK_DGRAM, 0);
-
-    if(bind(sockfd, (sockaddr*)&src_addr, sizeof (src_addr))<0){
-        cout<<"bind failed"<<endl;
-        perror("123456");
-    }
-    socklen_t socklen = sizeof(sockaddr_in);
-    int val;
-    int count = recvfrom(sockfd,&val, sizeof(int),0,(sockaddr*)&dst_addr,&socklen );
-//    cout<<"udp start"<<endl;
-    if(flag_srandom == val){
-        cout<<"udp addr:"<<inet_ntoa(dst_addr.sin_addr)<<endl;
-        cout<<"udp port:"<<htons(dst_addr.sin_port)<<endl;
-        cout<<"udp successful"<<endl;
-    }
-
-    if( connect(sockfd, (struct sockaddr *) &dst_addr, socklen) < 0){
-        perror("connect() error");
-    }
-//    cout<<"udp start1"<<endl;
-//    write_int(sockfd,flag_srandom);
-//    cout<<"fd:"<<sockfd<<endl;
-
-    pthread_t tid_udp;
-    pthread_create(&tid_udp, NULL, UDPHandle, (void *)sockfd);
-
-
-
-
-    struct event* ev = nullptr;
-    struct event_base* evbase = event_base_new();
-
-    ev = event_new(evbase, sock_status_fd, EV_CLOSED, __on_error, nullptr);
-
-    event_base_set(evbase, ev);
-    event_add(ev, nullptr);
-    event_base_dispatch(evbase);
-
-    close(sock_status_fd);
-}
-
-
-int str_to_number(const char* str)
-{
-    int i,len, num = 0;
-    len= strlen(str);
-
-    for (i = 0; i < len;i++)
-        num = num * 10 + str[i] - '0';
-
-    return num;
 }

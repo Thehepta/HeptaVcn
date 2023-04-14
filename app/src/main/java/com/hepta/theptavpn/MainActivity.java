@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         binding.stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("Rzx","stop");
+//                Log.e("Rzx","stop");
                 stopVpnService();
             }
         });

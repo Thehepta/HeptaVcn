@@ -26,7 +26,7 @@ void __on_error(evutil_socket_t sockfd, short event, void* arg) {
 }
 
 
-void *UDPHandle(void *arg) {
+void *UDPTunnel(void *arg) {
     struct sockaddr_in *ser_addr = static_cast<sockaddr_in *>(arg);                                //是用于指定对方(目的主机)信息
     cout<<ser_addr->sin_port<<endl;
     cout<<inet_ntoa(ser_addr->sin_addr)<<endl;

@@ -2,19 +2,14 @@ package com.hepta.theptavpn;
 
 
 import android.app.PendingIntent;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.VpnService;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.ParcelFileDescriptor;
-
 import android.util.Log;
-import android.view.WindowManager;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
 
 import com.hepta.theptavpn.vpnfirewall.PingReflector;
 
@@ -32,8 +27,8 @@ public class LocalVPNService extends VpnService
     }
     public native boolean connect_server(String serverAddress, String serverPort);
 
-    public native void setConfig(int fd,int prorxType);
-    public native void startVpn();
+    public native void StartVpn(int fd, int prorxType);
+    public native void stopVpn();
 
     public native void startProxyServer();
     public static final String ACTION_DISCONNECT = "ACTION_DISCONNECT";
@@ -86,12 +81,14 @@ public class LocalVPNService extends VpnService
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && ACTION_DISCONNECT.equals(intent.getAction())) {
+            stopVpn();
             disconnect();
             return START_NOT_STICKY;
         } else {
             String ServerAddress = intent.getStringExtra("serverAddress");
             String ServerPort = intent.getStringExtra("serverPort");
-            connect(ServerAddress,ServerPort);
+            setupVPN();
+            StartVpn(vpnInterface.getFd(),1);
             return START_STICKY;
         }
     }
@@ -112,9 +109,7 @@ public class LocalVPNService extends VpnService
             showDialog("不能连接到服务");
             return;
         };
-        setupVPN();
-        setConfig(vpnInterface.getFd(),1);
-//        startVpn();
+
 
     }
 
