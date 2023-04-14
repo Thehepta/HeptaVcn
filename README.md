@@ -4,7 +4,7 @@
 需要创建一个网卡配合使用，并配置iptable规则
 
 sudo ip tuntap add tun111 mode tun
-sudo ip addr add 10.0.0.2/30 dev tun111
+sudo ip addr add 10.0.0.1/30 dev tun111
 sudo ip link set dev tun111 up
 sudo iptables -t nat -A POSTROUTING -o enp89s0 -j MASQUERADE
  // iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -j MASQUERADE  匹配来源地址IP/MASK，加叹号"!"表示除这个IP外。

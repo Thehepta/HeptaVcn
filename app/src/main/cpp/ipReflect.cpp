@@ -122,12 +122,12 @@ void __on_error(evutil_socket_t sockfd, short event, void* arg) {
 
 }
 
-void udpconn_cb(evutil_socket_t sockfd, short event, void* arg) {
+void udpconn_cb(evutil_socket_t read_fd, short event, void* write_fd) {
 
-
-    ssize_t count =  read(sockfd, buffer, 1500);
-    write(tun_fd, buffer, count);
-    LOGE("服务器从客户端接收的数据len:%d\n",count);
+    int sockfd = (intptr_t)write_fd;
+    ssize_t count =  read(read_fd, buffer, 1500);
+    write(sockfd, buffer, count);
+    LOGE("TUN send len:%d\n",count);
 }
 
 
@@ -137,24 +137,24 @@ void *UDPHandle(void *arg) {
 
     std::string str="hekko world";
     char buff[1024];
-    while (1){
-        LOGE("connect send\n");
-        sleep(1);
-        send(sockfd, str.c_str(), str.length(), 0);
-//        sendto(socket_fd, str.c_str(), str.length(), 0, (struct sockaddr*)&remote, server_len);
-    }
+//    while (1){
+//        LOGE("connect send\n");
+//        sleep(1);
+//        send(sockfd, str.c_str(), str.length(), 0);
+////        sendto(socket_fd, str.c_str(), str.length(), 0, (struct sockaddr*)&remote, server_len);
+//    }
 
-//    struct event* ev_udp = nullptr;
-//    struct event* ev_tap = nullptr;
-//    struct event_base* evbase = event_base_new();
-//    ev_tap = event_new(evbase, tun_fd, EV_READ |EV_PERSIST, udpconn_cb, (void *)sockfd);
-//    ev_udp = event_new(evbase, sockfd, EV_READ |EV_PERSIST, udpconn_cb2, nullptr);
+    struct event* ev_udp = nullptr;
+    struct event* ev_tap = nullptr;
+    struct event_base* evbase = event_base_new();
+    ev_tap = event_new(evbase, tun_fd, EV_READ |EV_PERSIST, udpconn_cb, (void *)sockfd);
+    ev_udp = event_new(evbase, sockfd, EV_READ |EV_PERSIST, udpconn_cb, (void *)tun_fd);
 
-//    event_base_set(evbase, ev_udp);
-//    event_base_set(evbase, ev_tap);
-//    event_add(ev_udp, nullptr);
-//    event_add(ev_tap, nullptr);
-//    event_base_dispatch(evbase);
+    event_base_set(evbase, ev_tap);
+    event_base_set(evbase, ev_udp);
+    event_add(ev_tap, nullptr);
+    event_add(ev_udp, nullptr);
+    event_base_dispatch(evbase) ;
 //
 //    close(sockfd);
 }
@@ -202,7 +202,7 @@ void ipReflect_start(int fd){
     if (connect(udp_send_fd, (struct sockaddr *) &udp_send_sock, server_len)) {
         LOGE("connect failed\n");
     }
-//    write_int(udp_send_fd,flag_srandom);
+    write_int(udp_send_fd,flag_srandom);
 //    if(flag_srandom == read_int(sock_fd)){
 //        LOGE("udp successful");
 //    }
