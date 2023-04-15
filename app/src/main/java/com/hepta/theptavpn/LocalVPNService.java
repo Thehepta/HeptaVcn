@@ -81,8 +81,8 @@ public class LocalVPNService extends VpnService
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && ACTION_DISCONNECT.equals(intent.getAction())) {
-            stopVpn();
             disconnect();
+            stopVpn();
             return START_NOT_STICKY;
         } else {
             String ServerAddress = intent.getStringExtra("serverAddress");
@@ -129,6 +129,7 @@ public class LocalVPNService extends VpnService
         try {
             if (vpnInterface != null) {
                 Log.i(TAG, "Closing filedescriptor");
+                vpnInterface.getFd();
                 vpnInterface.close();
             }
         } catch(IOException e) {

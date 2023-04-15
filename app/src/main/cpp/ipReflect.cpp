@@ -14,7 +14,7 @@
 
 
 struct event_base* evbase ;
-
+int tcp_control_sock_fd;
 
 #define ERR_EXIT(m)         \
     do                      \
@@ -49,13 +49,14 @@ static void write_int(int fd, int val) {
 
 void __on_error(struct bufferevent *bev, short what, void *ctx) {
     LOGE("Tunnel __on_error");
+    event_base_loopbreak(evbase);
+
 }
 
 
 void __on_tcp_error(evutil_socket_t sockfd, short event, void* arg) {
-
-
-
+    LOGE("__on_tcp_error");
+    event_base_loopbreak(evbase);
 }
 
 
@@ -69,15 +70,17 @@ void __on_recv(struct bufferevent *read, void *ctx)
 }
 int ipReflect_stop(){
 
+    return shutdown(tcp_control_sock_fd,SHUT_RDWR);
 }
+
 
 int ipReflect_start(int tun_fd){
     LOGE("ipReflect_start");
 
     char * ip_addr = "192.168.31.38";
     struct sockaddr_in  remote;
-    int tcp_control_sock_fd, udp_Tunnel_fd;
     int flag_srandom ,port;
+    int  udp_Tunnel_fd;
     struct event* ev = nullptr;
     evbase = event_base_new();
     struct bufferevent *Tun_BufEv, *UdpBufEv;
@@ -87,6 +90,7 @@ int ipReflect_start(int tun_fd){
         perror("socket()");
         exit(1);
     }
+
 
     memset(&remote, 0, sizeof(remote));
     remote.sin_family = AF_INET;
@@ -131,15 +135,21 @@ int ipReflect_start(int tun_fd){
     bufferevent_setcb(UdpBufEv, __on_recv, NULL, __on_error, Tun_BufEv);
     bufferevent_setcb(Tun_BufEv, __on_recv, NULL, __on_error, UdpBufEv);
 
-    bufferevent_enable(UdpBufEv, EV_READ | EV_PERSIST);
+    bufferevent_enable(UdpBufEv, EV_READ | EV_PERSIST|EV_CLOSED);
     bufferevent_enable(Tun_BufEv, EV_READ| EV_CLOSED | EV_PERSIST);
 
     ev = event_new(evbase, tcp_control_sock_fd, EV_CLOSED, __on_tcp_error, nullptr);
     event_base_set(evbase, ev);
     event_add(ev, nullptr);
     event_base_dispatch(evbase);
+    event_base_free(evbase);
+    event_free(ev);
+    bufferevent_free(UdpBufEv);
+    bufferevent_free(Tun_BufEv);
     close(udp_Tunnel_fd);
     close(tcp_control_sock_fd);
+    LOGE("ipReflect_start thread exit");
+
     return 0;
 
 }
