@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
+import android.net.ProxyInfo
 import android.net.VpnService
 import android.os.*
 import android.util.Log
@@ -17,7 +18,7 @@ class LocalVPNService : VpnService() {
 //    external fun StartVpn(fd: Int, prorxType: Int)
 
     external fun NativeStartVpn(fd: Int, ipaddr: String, port: Int, netType: Int)
-    external fun NativeStopVpn()
+    external fun NativeStopVpn( netType: Int)
     external fun startProxyServer()
     private var vpnInterface: ParcelFileDescriptor? = null
     private val pendingIntent: PendingIntent? = null
@@ -40,11 +41,7 @@ class LocalVPNService : VpnService() {
             }
             builder.setMtu(MTU)
             //                builder.addDisallowedApplication("com.android.chrome");  //禁止这个应用通过vpn访问网络，但是不禁止网络，就像vpn不存在一样，正常访问网络,可以设置多个
-            try {
-                builder.addAllowedApplication("com.hepta.vpntest") // 只允许这个应用通过vpn访问网络，其他应用不禁止网络，就像vpn不存在一样，正常访问网络，可以设置多个
-            } catch (e: PackageManager.NameNotFoundException) {
-                throw RuntimeException(e)
-            }
+            builder.addAllowedApplication("com.hepta.vpntest") // 只允许这个应用通过vpn访问网络，其他应用不禁止网络，就像vpn不存在一样，正常访问网络，可以设置多个
             //            builder.addAllowedApplication("com.tencent.mm");  //
 //            builder.allowBypass();
             vpnInterface = builder.setSession(getString(R.string.app_name)).establish()
@@ -65,7 +62,8 @@ class LocalVPNService : VpnService() {
     }
 
     public fun stopVpnService(){
-        NativeStopVpn()
+        vpnRunnable!!.stopVpn()
+
     }
 
     public fun startVpnService(guid:String): Boolean{
@@ -83,16 +81,20 @@ class LocalVPNService : VpnService() {
 
     inner class VPNRunnable(val config: ServerConfig) : Thread() {
         override fun run() {
+            Log.w(TAG, "VPNRunnable thread start")
             vpnInterface?.let {
                 NativeStartVpn(it.fd, config.ipaddr,config.port,config.netType)
             }
-            Log.w(TAG, "VPNRunnable end")
+            Log.w(TAG, "VPNRunnable thread end")
             proxyBinder.updateRunStatus(false)
             vpnInterface!!.close()
             vpnInterface=null
         }
 
-
+        fun stopVpn() {
+            NativeStopVpn(0)
+            Log.w(TAG, "VPNRunnable stopVpn")
+        }
     }
 
     override fun unbindService(conn: ServiceConnection) {

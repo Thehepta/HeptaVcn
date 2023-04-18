@@ -74,10 +74,10 @@ int ipReflect_stop(){
 }
 
 
-int ipReflect_start(int fd, char *pJstring, int i, int i1) {
-    LOGE("ipReflect_start");
+int ipReflect_start(int fd, char *ipaddr_str, int tcp_port) {
+    LOGE("ipReflect_start ipaddr= %s port=%d",ipaddr_str,tcp_port);
 
-    char * ip_addr = "192.168.31.38";
+    char * ip_addr = ipaddr_str;
     struct sockaddr_in  remote;
     int flag_srandom ,port;
     int  udp_Tunnel_fd;
@@ -94,8 +94,8 @@ int ipReflect_start(int fd, char *pJstring, int i, int i1) {
 
     memset(&remote, 0, sizeof(remote));
     remote.sin_family = AF_INET;
-    remote.sin_addr.s_addr = inet_addr(ip_addr);
-    remote.sin_port = htons(TCP_PORT);
+    remote.sin_addr.s_addr = inet_addr(ipaddr_str);
+    remote.sin_port = htons(tcp_port);
 
     /* connection request */
     if (connect(tcp_control_sock_fd, (struct sockaddr*) &remote, server_len) < 0) {

@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
         binding.recyclerView.setAdapter(adapter);
 
         setupViewModel();
-
         Intent vpnIntent = VpnService.prepare(MainActivity.this);
         if (vpnIntent != null)
             startActivityForResult(vpnIntent, VPN_REQUEST_CODE);
