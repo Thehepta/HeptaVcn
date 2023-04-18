@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="nettype" translatable="false">
+        <item>IP-Reflector</item>
+        <item>SOCKS5</item>
+        <item>HTTP-PROXY</item>
+
+    </string-array>
+
+    <string-array name="filterApp" translatable="false">
+        <item>None</item>
+        <item>addAllowedApplication</item>
+        <item>addDisallowedApplication</item>
+    </string-array>
+
+</resources>

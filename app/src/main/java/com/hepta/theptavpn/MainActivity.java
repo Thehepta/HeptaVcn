@@ -1,161 +1,183 @@
 package com.hepta.theptavpn;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.res.ColorStateList;
 import android.net.VpnService;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.hepta.theptavpn.databinding.ActivityMainBinding;
 
-import java.io.IOException;
-import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
 public class MainActivity extends AppCompatActivity {
 
-    // Used to load the 'theptavpn' library on application startup.
-
-    private static final int VPN_REQUEST_CODE = 0x0F;
-    private static final int APPLIST_REQUEST_CODE = 0x1F;
-
     private ActivityMainBinding binding;
-    private List<String> pkgNameList;
-    private TextView mServerAddress;
-    private TextView mServerPort;
-    @Override
+    MainRecyclerAdapter adapter ;
+    private static final int VPN_REQUEST_CODE = 0x0F;
+    private LocalVPNService vpnServiceBinder = null;
+
+    public MainViewModel mainViewModel;
+
+
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        mServerAddress = binding.address;
-        mServerPort = binding.port;
-        // Example of a call to a native method
-
-
-
-        binding.start.setOnClickListener(new View.OnClickListener() {
+        setTitle(getString(R.string.app_name));
+        setSupportActionBar(binding.toolbar);
+        binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                startVPN();
-            }
-        });
-        binding.stop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Log.e("Rzx","stop");
-                stopVpnService();
-            }
-        });
-        binding.select.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(new Intent().setClass (MainActivity.this, appListActivity.class),APPLIST_REQUEST_CODE);
+            public void onClick(View view) {
+                if (mainViewModel.isRunning().getValue()) {
+//                    binding.fabProgressCircle.show();
+                    stopVpnService();
+                    mainViewModel.isRunning().setValue(false);
+                }else {
+                    mainViewModel.isRunning().setValue(true);
+
+                    startVpnService();
+
+                }
             }
         });
 
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
+        binding.recyclerView.setHasFixedSize(true);
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new MainRecyclerAdapter(this);
+        binding.recyclerView.setAdapter(adapter);
 
-        binding.curl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OkHttpClient client = new OkHttpClient();
+        setupViewModel();
 
-                Request request = new Request.Builder()
-                        .get()
-                        .url("https://www.baidu.com")
-                        .build();
-                Call call = client.newCall(request);
-                call.enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        //失败情况
-                        runOnUiThread(new Runnable() {//子线程内无法更新，通过runOnUiThread来更新界面Ui
-                            @Override
-                            public void run() {
-                                Toast.makeText(MainActivity.this, "网络访问失败", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        //请求成功
-                        response = client.newCall(request).execute();
-                        String result = response.body().string();
-                        runOnUiThread(new Runnable() {//子线程内无法更新，通过runOnUiThread来更新界面Ui
-                            @Override
-                            public void run() {
-                                Toast.makeText(MainActivity.this, result, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                });
-            }
-        });
-
-    }
-
-
-    private void startVPN()
-    {
-        Intent vpnIntent = VpnService.prepare(this);
+        Intent vpnIntent = VpnService.prepare(MainActivity.this);
         if (vpnIntent != null)
             startActivityForResult(vpnIntent, VPN_REQUEST_CODE);
         else
             onActivityResult(VPN_REQUEST_CODE, RESULT_OK, null);
+
     }
+
+    private void setupViewModel() {
+        mainViewModel.getUpdateListAction().observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer index) {
+                if (index >= 0) {
+                    adapter.notifyItemChanged(index);
+                } else {
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
+
+        mainViewModel.isRunning().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean isRunning) {
+                adapter.setRunning(isRunning);
+                if (isRunning) {
+                    binding.fab.setBackgroundTintList( ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.colorSelected)));
+                }else {
+                    binding.fab.setBackgroundTintList( ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.colorUnselected)));
+                }
+
+            }
+        });
+        mainViewModel.isRunning().setValue(false);
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mainViewModel.reloadServerList();
+
+        Log.e("Rzx","onResume");
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.filter_config:
+                Log.e("Rzx","filter_config");
+                return true;
+            case R.id.add_config:
+                Log.e("Rzx","add_config");
+                startActivity(new Intent().setClass (MainActivity.this, ConfigActivity.class));
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        Log.e("Rzx","onActivityResult");
 
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == VPN_REQUEST_CODE && resultCode == RESULT_OK)
         {
-            startVpnService();
+            ServiceConnection conn = new ServiceConnection() {
+                @Override
+                public void onServiceDisconnected(ComponentName name) {
+                    vpnServiceBinder = null;
+                }
+                @Override
+                public void onServiceConnected(ComponentName name, IBinder service) {
+                    //返回一个MsgService对象
+                    vpnServiceBinder = ((LocalVPNService.ProxyBinder)service).getMovieService(MainActivity.this);
+                }
+            };
+//            String guid = mainViewModel.getMainStorage().decodeString(MmkvManager.KEY_SELECTED_SERVER);
+            Intent intent = new Intent(getApplicationContext(), LocalVPNService.class);
+            bindService(intent, conn, Context.BIND_AUTO_CREATE);
         }
-        if (requestCode == APPLIST_REQUEST_CODE && resultCode == RESULT_OK){
-            Log.e("Rzx","APPLIST_REQUEST_CODE");
-        }
-
-
-
     }
-    public void startVpnService() {
+    public void startVpnService(){
 
-        Intent intent = new Intent(getApplicationContext(), LocalVPNService.class);
-        String ServerAddress = mServerAddress.getText().toString();
-        String ServerPort = mServerPort.getText().toString();
-        intent.putExtra("serverAddress",ServerAddress);
-        intent.putExtra("serverPort",ServerPort);
-        if (binding.RadioDisable.isChecked()){
-            intent.putExtra("appDisable",true);
+        if (vpnServiceBinder ==null){
+
         }else {
-            intent.putExtra("appDisable",false);
+            String guid = mainViewModel.getMainStorage().decodeString(MmkvManager.KEY_SELECTED_SERVER);
+            if(guid != null){
+                boolean run = vpnServiceBinder.startVpnService(guid);
+                Log.e("rzx","run:"+run);
+            }else {
+                Toast.makeText(this,"select a server",Toast.LENGTH_LONG).show();
+            }
+
         }
-        startService(intent);
-    }
 
+
+
+
+    }
     public void stopVpnService() {
-        startService(new Intent(getApplicationContext(), LocalVPNService.class).setAction(LocalVPNService.ACTION_DISCONNECT));
+        vpnServiceBinder.stopVpnService();
     }
 
-    /**
-     * A native method that is implemented by the 'theptavpn' native library,
-     * which is packaged with this application.
-     */
 }

@@ -3,6 +3,8 @@ package com.hepta.theptavpn;
 import android.app.Application;
 import android.util.Log;
 
+import com.tencent.mmkv.MMKV;
+
 public class TheptaVapApp extends Application {
 
 
@@ -10,6 +12,7 @@ public class TheptaVapApp extends Application {
     public void onCreate() {
         super.onCreate();
         Log.e("TheptaVapApp onCreate",getCallStatck());
+        MMKV.initialize(this);
 
     }
 

@@ -16,11 +16,12 @@
         android:supportsRtl="true"
         android:name=".TheptaVapApp"
         android:extractNativeLibs="true"
-        android:theme="@style/Theme.TheptaVpn"
+        android:theme="@style/AppThemeDayNight"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:theme="@style/AppThemeDayNight.NoActionBar"
+        android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -57,6 +58,11 @@
                 <action android:name="android.net.VpnService"/>
             </intent-filter>
         </service>
+
+        <activity
+            android:exported="false"
+            android:name=".ConfigActivity"
+            android:windowSoftInputMode="stateUnchanged" />
     </application>
 
 </manifest>

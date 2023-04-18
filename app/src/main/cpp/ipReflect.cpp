@@ -74,7 +74,7 @@ int ipReflect_stop(){
 }
 
 
-int ipReflect_start(int tun_fd){
+int ipReflect_start(int fd, char *pJstring, int i, int i1) {
     LOGE("ipReflect_start");
 
     char * ip_addr = "192.168.31.38";
@@ -88,7 +88,7 @@ int ipReflect_start(int tun_fd){
 
     if ((tcp_control_sock_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("socket()");
-        exit(1);
+        return CREATE_SOCKET_ERROR;
     }
 
 
@@ -100,7 +100,7 @@ int ipReflect_start(int tun_fd){
     /* connection request */
     if (connect(tcp_control_sock_fd, (struct sockaddr*) &remote, server_len) < 0) {
         perror("connect()");
-        exit(1);
+        return CONNECT_SERVER_ERROR;
     }
     srand((unsigned)time(NULL));
     flag_srandom = rand();
@@ -119,6 +119,8 @@ int ipReflect_start(int tun_fd){
     udp_Tunnel_fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (connect(udp_Tunnel_fd, (struct sockaddr *) &udp_send_sock, server_len)) {
         LOGE("connect failed\n");
+        return CONNECT_TUNNEL_ERROR;
+
     }
     write_int(udp_Tunnel_fd, flag_srandom);
 
@@ -129,7 +131,7 @@ int ipReflect_start(int tun_fd){
     UdpBufEv = bufferevent_socket_new(evbase, udp_Tunnel_fd,
                                       BEV_OPT_CLOSE_ON_FREE|BEV_OPT_DEFER_CALLBACKS);
 
-    Tun_BufEv = bufferevent_socket_new(evbase, tun_fd,
+    Tun_BufEv = bufferevent_socket_new(evbase, fd,
                                        BEV_OPT_CLOSE_ON_FREE|BEV_OPT_DEFER_CALLBACKS);
 
     bufferevent_setcb(UdpBufEv, __on_recv, NULL, __on_error, Tun_BufEv);

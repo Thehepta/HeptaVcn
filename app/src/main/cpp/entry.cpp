@@ -15,8 +15,6 @@
 
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
-pthread_t g_Vpntid;
-int tun_interface;
 // 内存查看
 void hexDump(const unsigned char *data, size_t size)
 {
@@ -59,36 +57,22 @@ void hexDump(const unsigned char *data, size_t size)
 void *ThreadFun(void *tun_interface)
 {
 
-    ipReflect_start((intptr_t)tun_interface);
+    ipReflect_start((intptr_t) tun_interface, nullptr, 0, 0);
     pthread_exit(0);
 }
 
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_hepta_theptavpn_LocalVPNService_StartVpn(JNIEnv *env, jobject thiz, int interface, int proxyType) {
+Java_com_hepta_theptavpn_LocalVPNService_NativeStartVpn(JNIEnv *env, jobject thiz, int interface, jstring ipaddr,int port ,int proxyType) {
     // TODO: implement setTunFd()
 
-    tun_interface = interface;
-    pthread_create(&g_Vpntid, NULL, ThreadFun, (void*)interface);
-    pthread_detach(g_Vpntid);	// 将线程分离
-
-//    switch (fork()) {
-//        case -1:
-//            LOGE("fork vpn process failed");
-//            break;
-//        case 0:
-//            LOGE("fork vpn process success child pid = %d",getpid());
-//            exit(0);
-//            break;
-//        default:
-//            break;
-//    }
-
+    char * ipaddr_str = const_cast<char *>(env->GetStringUTFChars(ipaddr, NULL));
+    ipReflect_start(interface, ipaddr_str, port, proxyType);
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_hepta_theptavpn_LocalVPNService_stopVpn(JNIEnv *env, jobject thiz) {
+Java_com_hepta_theptavpn_LocalVPNService_NativeStopVpn(JNIEnv *env, jobject thiz) {
 
     ipReflect_stop();
 

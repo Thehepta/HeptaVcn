@@ -8,4 +8,25 @@
     <string name="connecting">ToyVPN is connecting...</string>
     <string name="connected">ToyVPN is connected!</string>
     <string name="disconnected">ToyVPN is disconnected!</string>
+    <string name="connection_test_pending">Check Connectivity</string>
+    <string name="title_sub_setting">Subscription group setting</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_user_asset_setting">Geo asset files</string>
+    <string name="title_pref_promotion">Promotion</string>
+    <string name="title_logcat">logcat</string>
+    <string name="title_pref_feedback">feedback</string>
+    <string name="menu_item_add_config">Add config</string>
+    <string name="menu_item_import_config_qrcode">Import config from QRcode</string>
+    <string name="menu_item_import_config_clipboard">Import config from Clipboard</string>
+    <string name="title_server">Configuration file</string>
+    <string name="server_lab_remarks">remarks</string>
+    <string name="server_lab_address">address</string>
+    <string name="server_lab_port">port</string>
+    <string name="server_lab_id">id</string>
+    <string name="server_lab_alterid">alterid</string>
+    <string name="server_lab_filterApp">filter App(option def:None)</string>
+    <string name="server_lab_NetWork_Type">NetWork Type</string>
+    <string name="menu_item_del_config">Delete config</string>
+    <string name="menu_item_save_config">Save config</string>
+    <string name="del_config_comfirm">Confirm delete？</string>
 </resources>
