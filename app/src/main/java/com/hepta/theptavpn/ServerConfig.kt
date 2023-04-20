@@ -15,6 +15,9 @@ class ServerConfig {
             return ServerConfig()
         }
 
+        const val NET_TYPE_HTTP = 1
+        const val NET_TYPE_SOCKS = 2
+        const val NET_TYPE_IPREF = 4
     }
 
 }

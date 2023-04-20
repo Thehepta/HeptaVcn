@@ -171,6 +171,20 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+//        engine.Key key = new Key();
+//        key.setMark(0);
+//        key.setMTU(0);
+//        key.setDevice("fd://" + tunDevice.getFd()); // <--- here
+//        key.setInterface("");
+//        key.setLogLevel("debug");
+//        key.setProxy("socks5://127.0.0.1:1080"); // <--- and here
+//        key.setRestAPI("");
+//        key.setTCPSendBufferSize("");
+//        key.setTCPReceiveBufferSize("");
+//        key.setTCPModerateReceiveBuffer(false);
+//
+//        engine.Engine.insert(key);
+//        engine.Engine.start();
 
 
 

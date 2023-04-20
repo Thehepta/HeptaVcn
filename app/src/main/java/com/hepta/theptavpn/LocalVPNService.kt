@@ -3,16 +3,13 @@ package com.hepta.theptavpn
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.ServiceConnection
-import android.content.pm.PackageManager
-import android.net.ProxyInfo
 import android.net.VpnService
 import android.os.*
 import android.util.Log
 import android.widget.Toast
 import java.net.InetAddress
 import java.net.UnknownHostException
-
-
+import engine.Engine
 class LocalVPNService : VpnService() {
     external fun connect_server(serverAddress: String?, serverPort: String?): Boolean
 //    external fun StartVpn(fd: Int, prorxType: Int)
@@ -55,14 +52,64 @@ class LocalVPNService : VpnService() {
         val config =  MmkvManager.decodeServerConfig(guid)
 
         setupVPN()
-        vpnRunnable = VPNRunnable(config!!)
-        vpnRunnable!!.start()
-        return vpnRunnable!!.isAlive
+//        vpnRunnable!!.start()
+
+        var proxy = ""
+        when (config?.netType){
+            1->{
+                proxy = "socks5://"+config.ipaddr+":"+config.port
+            }
+            2->{
+                proxy = "http://"+config.ipaddr+":"+config.port
+            }
+
+            4 -> {
+                Log.w(TAG, "VPNRunnable thread start")
+                vpnInterface?.let {
+                    NativeStartVpn(it.fd, config.ipaddr,config.port,config.netType)
+                }
+                Log.w(TAG, "VPNRunnable thread end")
+            }
+        }
+
+        if (config?.netType != 4){
+            val key: engine.Key = engine.Key()
+            key.setMark(0)
+            key.setMTU(0)
+            key.setDevice("fd://" + vpnInterface?.detachFd()) // <--- here
+
+            key.setInterface("")
+            key.setLogLevel("debug")
+            key.setProxy(proxy) // <--- and here
+
+            key.setRestAPI("")
+            key.setTCPSendBufferSize("")
+            key.setTCPReceiveBufferSize("")
+            key.setTCPModerateReceiveBuffer(false)
+
+            engine.Engine.insert(key)
+            engine.Engine.start()
+        }
+
+
+
+        Log.e(TAG, "vpnRunnable id:" + vpnRunnable!!.id)
+
+        return true
 
     }
 
     public fun stopVpnService(){
-        vpnRunnable!!.stopVpn()
+//        Log.e(TAG, "stopVpnService is :" + vpnRunnable!!.id)
+//
+//        Log.e(TAG, "stopVpnService start :" + vpnRunnable!!.isAlive)
+//        vpnInterface!!.close()
+//        vpnInterface=null
+//        vpnRunnable!!.stopVpn()
+//        Log.e(TAG, "stopVpnService end isAlive :" + vpnRunnable!!.isAlive)
+
+        engine.Engine.stop()
+
 
     }
 
@@ -81,19 +128,59 @@ class LocalVPNService : VpnService() {
 
     inner class VPNRunnable(val config: ServerConfig) : Thread() {
         override fun run() {
-            Log.w(TAG, "VPNRunnable thread start")
-            vpnInterface?.let {
-                NativeStartVpn(it.fd, config.ipaddr,config.port,config.netType)
+            var proxy = ""
+            when (config.netType){
+                1->{
+                    proxy = "socks5://"+config.ipaddr+":"+config.port
+                }
+                2->{
+                    proxy = "http://"+config.ipaddr+":"+config.port
+                }
+
+                4 -> {
+                    Log.w(TAG, "VPNRunnable thread start")
+                    vpnInterface?.let {
+                        NativeStartVpn(it.fd, config.ipaddr,config.port,config.netType)
+                    }
+                    Log.w(TAG, "VPNRunnable thread end")
+                }
             }
-            Log.w(TAG, "VPNRunnable thread end")
-            proxyBinder.updateRunStatus(false)
-            vpnInterface!!.close()
-            vpnInterface=null
+
+            if (config.netType != 4){
+                val key: engine.Key = engine.Key()
+                key.setMark(0)
+                key.setMTU(0)
+                key.setDevice("fd://" + vpnInterface?.detachFd()) // <--- here
+
+                key.setInterface("")
+                key.setLogLevel("debug")
+                key.setProxy(proxy) // <--- and here
+
+                key.setRestAPI("")
+                key.setTCPSendBufferSize("")
+                key.setTCPReceiveBufferSize("")
+                key.setTCPModerateReceiveBuffer(false)
+
+                engine.Engine.insert(key)
+                engine.Engine.start()
+            }
+            Log.e("Rzx","start vpn")
+//            proxyBinder.updateRunStatus(false)
+//            vpnInterface!!.close()
+//            vpnInterface=null
         }
 
         fun stopVpn() {
-            NativeStopVpn(0)
+            if (config.netType != 4){
+                engine.Engine.stop()
+                Log.e("Rzx","start stop")
+
+            }else {
+                NativeStopVpn(0)
+            }
             Log.w(TAG, "VPNRunnable stopVpn")
+
+
         }
     }
 
