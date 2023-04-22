@@ -70,13 +70,13 @@ void __on_recv(struct bufferevent *read, void *ctx)
 }
 int ipReflect_stop(){
 
+//    return shutdown(tcp_control_sock_fd,SHUT_RDWR);
     return shutdown(tcp_control_sock_fd,SHUT_RDWR);
 }
 
 
-int ipReflect_start(int fd, char *ipaddr_str, int tcp_port) {
+int ipReflect_start(int tun_fd, char *ipaddr_str, int tcp_port) {
     LOGE("ipReflect_start ipaddr= %s port=%d",ipaddr_str,tcp_port);
-
     char * ip_addr = ipaddr_str;
     struct sockaddr_in  remote;
     int flag_srandom ,port;
@@ -125,13 +125,13 @@ int ipReflect_start(int fd, char *ipaddr_str, int tcp_port) {
     write_int(udp_Tunnel_fd, flag_srandom);
 
 
-    LOGE("tcp fd:%d",tcp_control_sock_fd);
-    LOGE("udp fd:%d",udp_Tunnel_fd);
+    LOGE("tcp tun_fd:%d",tcp_control_sock_fd);
+    LOGE("udp tun_fd:%d",udp_Tunnel_fd);
 
     UdpBufEv = bufferevent_socket_new(evbase, udp_Tunnel_fd,
                                       BEV_OPT_CLOSE_ON_FREE|BEV_OPT_DEFER_CALLBACKS);
 
-    Tun_BufEv = bufferevent_socket_new(evbase, fd,
+    Tun_BufEv = bufferevent_socket_new(evbase, tun_fd,
                                        BEV_OPT_CLOSE_ON_FREE|BEV_OPT_DEFER_CALLBACKS);
 
     bufferevent_setcb(UdpBufEv, __on_recv, NULL, __on_error, Tun_BufEv);
@@ -150,7 +150,8 @@ int ipReflect_start(int fd, char *ipaddr_str, int tcp_port) {
     bufferevent_free(Tun_BufEv);
     close(udp_Tunnel_fd);
     close(tcp_control_sock_fd);
-    LOGE("ipReflect_start thread exit");
+    close(tun_fd);
+    LOGE("ipReflect_start exit");
 
     return 0;
 

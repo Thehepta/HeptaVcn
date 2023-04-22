@@ -8,7 +8,7 @@
     </string-array>
 
     <string-array name="filterApp" translatable="false">
-        <item>None</item>
+        <item>None(allowBypass)</item>
         <item>addAllowedApplication</item>
         <item>addDisallowedApplication</item>
     </string-array>

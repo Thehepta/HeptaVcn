@@ -64,40 +64,17 @@ void *ThreadFun(void *tun_interface)
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_hepta_theptavpn_LocalVPNService_NativeStartVpn(JNIEnv *env, jobject thiz, int interface, jstring ipaddr,int port ,int proxyType) {
+Java_com_hepta_theptavpn_Tunnel_IPreflectorTunnel_NativeStartVpn(JNIEnv *env, jobject thiz, int interface, jstring ipaddr,int port) {
     // TODO: implement setTunFd()
 
     char * ipaddr_str = const_cast<char *>(env->GetStringUTFChars(ipaddr, NULL));
     ipReflect_start(interface, ipaddr_str, port);
 }
+
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_hepta_theptavpn_LocalVPNService_NativeStopVpn(JNIEnv *env, jobject thiz,int proxyType) {
+Java_com_hepta_theptavpn_Tunnel_IPreflectorTunnel_NativeStopVpn(JNIEnv *env, jobject thiz) {
 
     ipReflect_stop();
-
-}
-extern "C"
-JNIEXPORT jboolean JNICALL
-Java_com_hepta_theptavpn_LocalVPNService_connect_1server(JNIEnv *env, jobject thiz,
-                                                         jstring jserver_address,
-                                                         jstring jserver_port) {
-    // TODO: implement connect_server()
-    const char * server_address = env->GetStringUTFChars(jserver_address, NULL);
-    const char * server_port = env->GetStringUTFChars(jserver_port, NULL);
-//    Sock5Client *sock5Client = new Sock5Client(server_address,server_port);
-//    sock5Client->connect_server();
-
-    return true;
-
-
-
-
-}
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_hepta_theptavpn_LocalVPNService_startProxyServer(JNIEnv *env, jobject thiz) {
-    // TODO: implement startProxyServer()
-
 
 }

@@ -24,23 +24,22 @@ import com.hepta.theptavpn.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class appListActivity extends AppCompatActivity {
+public class appListActivity extends BaseActivity {
 
 
     private AppListAdapter appListAdapter;
 
     private ActivityApplistBinding binding;
     List<AppListAdapter.AppInfo> launcherIconPackageList = new ArrayList<>();
-
+    List<String> enableList = MmkvManager.INSTANCE.decodeApplicationList();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityApplistBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        setSupportActionBar(binding.toolbar);
-        binding.toolbar.setNavigationIcon(R.drawable.toolbar_back);
-//        binding.toolbar.getMenu().findItem()
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         initRecycleView();
 
     }
@@ -53,6 +52,18 @@ public class appListActivity extends AppCompatActivity {
         binding.recyclerView.setLayoutManager(layoutManager);
         binding.recyclerView.setAdapter(appListAdapter);
         appListAdapter.setList(launcherIconPackageList);
+        appListAdapter.setOnAppSelectListener(new AppListAdapter.onListener() {
+            @Override
+            public void OnListener(boolean status, String pKgName) {
+                if(status){
+                    enableList.add(pKgName);
+                }else {
+                    enableList.remove(pKgName);
+                }
+
+            }
+        });
+
 
     }
 
@@ -68,6 +79,9 @@ public class appListActivity extends AppCompatActivity {
         List<ResolveInfo> resolveInfos = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_ALL);
         for (ResolveInfo info: resolveInfos) {
             AppListAdapter.AppInfo appInfo = new AppListAdapter.AppInfo(info.activityInfo.applicationInfo,mPm);
+            if(enableList.contains(appInfo.getPackageName())){
+                appInfo.setEnable(true);
+            }
             launcherIconPackageList.add(appInfo);
         }
 
@@ -81,20 +95,12 @@ public class appListActivity extends AppCompatActivity {
         menu.findItem(R.id.ok).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(@NonNull MenuItem item) {
-                Intent intent = new Intent();
-                intent.putExtra("data_return", "返回的数据");
-                setResult(RESULT_OK, intent);
+                MmkvManager.INSTANCE.encodeApplicationList(enableList);
                 finish();
                 return false;
             }
         });
-        menu.findItem(R.id.cancle).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(@NonNull MenuItem item) {
-                onBackPressed();
-                return false;
-            }
-        });
+
         return ret;
     }
 }

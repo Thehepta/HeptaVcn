@@ -3,16 +3,14 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/ok"
-        android:icon="@drawable/ok"
+        android:icon="@drawable/ic_action_done"
         android:enabled="true"
         app:showAsAction="ifRoom"
         android:title="ok" />
-    <item
-        android:id="@+id/cancle"
-        android:icon="@drawable/cancel"
-        android:enabled="true"
-        app:showAsAction="ifRoom"
-        android:title="cancle" />
-
-
+<!--    <item-->
+<!--        android:id="@+id/cancle"-->
+<!--        android:icon="@drawable/cancel"-->
+<!--        android:enabled="true"-->
+<!--        app:showAsAction="ifRoom"-->
+<!--        android:title="cancle" />-->
 </menu>

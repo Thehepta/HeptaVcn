@@ -7,193 +7,99 @@ import android.net.VpnService
 import android.os.*
 import android.util.Log
 import android.widget.Toast
+import com.hepta.theptavpn.Tunnel.IPreflectorTunnel
+import com.hepta.theptavpn.Tunnel.ProxyTunnel
+import com.hepta.theptavpn.Tunnel.tun2sockTunnel
+import com.tencent.mmkv.MMKV
 import java.net.InetAddress
 import java.net.UnknownHostException
-import engine.Engine
+
 class LocalVPNService : VpnService() {
-    external fun connect_server(serverAddress: String?, serverPort: String?): Boolean
-//    external fun StartVpn(fd: Int, prorxType: Int)
 
-    external fun NativeStartVpn(fd: Int, ipaddr: String, port: Int, netType: Int)
-    external fun NativeStopVpn( netType: Int)
-    external fun startProxyServer()
-    private var vpnInterface: ParcelFileDescriptor? = null
+
     private val pendingIntent: PendingIntent? = null
-    private var vpnRunnable: VPNRunnable? = null
     private var proxyBinder = LocalVPNService.ProxyBinder(this@LocalVPNService)
-
+    private var tunnel: ProxyTunnel? =null
+    private var Running:Boolean = false
     override fun onCreate() {
         super.onCreate()
     }
 
-    private fun setupVPN() {
-        if (vpnInterface == null) {
-            val builder: Builder = Builder()
-            builder.addAddress(VPN_ADDRESS, 30) //第二个参数子网掩码
-            try {
-                val address = InetAddress.getByName(VPN_ROUTE)
-                builder.addRoute(address, 0) //第二个参数子网掩码
-            } catch (e: UnknownHostException) {
-                throw RuntimeException(e)
-            }
-            builder.setMtu(MTU)
-            //                builder.addDisallowedApplication("com.android.chrome");  //禁止这个应用通过vpn访问网络，但是不禁止网络，就像vpn不存在一样，正常访问网络,可以设置多个
-            builder.addAllowedApplication("com.hepta.vpntest") // 只允许这个应用通过vpn访问网络，其他应用不禁止网络，就像vpn不存在一样，正常访问网络，可以设置多个
-            //            builder.addAllowedApplication("com.tencent.mm");  //
-//            builder.allowBypass();
-            vpnInterface = builder.setSession(getString(R.string.app_name)).establish()
-            Log.e(TAG, "fd:" + vpnInterface!!.fd)
-        }else{
-            Log.e(TAG, "vpnInterfaceis not null fd:" + vpnInterface!!.fd)
+    private fun setupVPN(): ParcelFileDescriptor? {
+
+
+
+        val builder: Builder = Builder()
+        builder.addAddress(VPN_ADDRESS, 30) //第二个参数子网掩码
+        try {
+            val address = InetAddress.getByName(VPN_ROUTE)
+            builder.addRoute(address, 0) //第二个参数子网掩码
+        } catch (e: UnknownHostException) {
+            throw RuntimeException(e)
         }
-    }
+        builder.setMtu(MTU)
+        val allow_type = MmkvManager.getAllowType()
+        when(allow_type){
+            MmkvManager.KEY_APP_ALLWO_BYPASS-> builder.allowBypass();
 
-    private fun startVpn(guid:String): Boolean{
-        val config =  MmkvManager.decodeServerConfig(guid)
-
-        setupVPN()
-//        vpnRunnable!!.start()
-
-        var proxy = ""
-        when (config?.netType){
-            1->{
-                proxy = "socks5://"+config.ipaddr+":"+config.port
-            }
-            2->{
-                proxy = "http://"+config.ipaddr+":"+config.port
-            }
-
-            4 -> {
-                Log.w(TAG, "VPNRunnable thread start")
-                vpnInterface?.let {
-                    NativeStartVpn(it.fd, config.ipaddr,config.port,config.netType)
+            MmkvManager.KEY_APP_ADD_ALLOW-> {
+                val applist  = MmkvManager.decodeApplicationList()
+                for (appPkg in applist){
+                    builder.addAllowedApplication(appPkg)
                 }
-                Log.w(TAG, "VPNRunnable thread end")
+            }
+            MmkvManager.KEY_APP_ADD_DIS_ALLOW-> {
+                val applist  = MmkvManager.decodeApplicationList()
+                for (appPkg in applist){
+                    builder.addDisallowedApplication(appPkg)
+                }
             }
         }
-
-        if (config?.netType != 4){
-            val key: engine.Key = engine.Key()
-            key.setMark(0)
-            key.setMTU(0)
-            key.setDevice("fd://" + vpnInterface?.detachFd()) // <--- here
-
-            key.setInterface("")
-            key.setLogLevel("debug")
-            key.setProxy(proxy) // <--- and here
-
-            key.setRestAPI("")
-            key.setTCPSendBufferSize("")
-            key.setTCPReceiveBufferSize("")
-            key.setTCPModerateReceiveBuffer(false)
-
-            engine.Engine.insert(key)
-            engine.Engine.start()
-        }
-
-
-
-        Log.e(TAG, "vpnRunnable id:" + vpnRunnable!!.id)
-
-        return true
+        val vpnInterface = builder.setSession(getString(R.string.app_name)).establish()
+        return vpnInterface
 
     }
+
+    private fun getTunnelType(config: ServerConfig, fd: Int): ProxyTunnel {
+
+        if (config.netType == 0) {
+            return IPreflectorTunnel(config, fd)
+        } else {
+            return tun2sockTunnel(config, fd)
+        }
+    }
+
+
 
     public fun stopVpnService(){
-//        Log.e(TAG, "stopVpnService is :" + vpnRunnable!!.id)
-//
-//        Log.e(TAG, "stopVpnService start :" + vpnRunnable!!.isAlive)
-//        vpnInterface!!.close()
-//        vpnInterface=null
-//        vpnRunnable!!.stopVpn()
-//        Log.e(TAG, "stopVpnService end isAlive :" + vpnRunnable!!.isAlive)
-
-        engine.Engine.stop()
+        tunnel?.stop()
+        Running = false
 
 
     }
 
     public fun startVpnService(guid:String): Boolean{
-        return  startVpn(guid)
+        val config = MmkvManager.decodeServerConfig(guid)
+        tunnel = getTunnelType(config!!, setupVPN()!!.detachFd())
+        tunnel?.start()
+        Running = true
+        return true
     }
 
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
     private fun showDialog(msg: String) {
         val handlerThree = Handler(Looper.getMainLooper())
         handlerThree.post { Toast.makeText(applicationContext, msg, Toast.LENGTH_LONG).show() }
     }
 
-    inner class VPNRunnable(val config: ServerConfig) : Thread() {
-        override fun run() {
-            var proxy = ""
-            when (config.netType){
-                1->{
-                    proxy = "socks5://"+config.ipaddr+":"+config.port
-                }
-                2->{
-                    proxy = "http://"+config.ipaddr+":"+config.port
-                }
-
-                4 -> {
-                    Log.w(TAG, "VPNRunnable thread start")
-                    vpnInterface?.let {
-                        NativeStartVpn(it.fd, config.ipaddr,config.port,config.netType)
-                    }
-                    Log.w(TAG, "VPNRunnable thread end")
-                }
-            }
-
-            if (config.netType != 4){
-                val key: engine.Key = engine.Key()
-                key.setMark(0)
-                key.setMTU(0)
-                key.setDevice("fd://" + vpnInterface?.detachFd()) // <--- here
-
-                key.setInterface("")
-                key.setLogLevel("debug")
-                key.setProxy(proxy) // <--- and here
-
-                key.setRestAPI("")
-                key.setTCPSendBufferSize("")
-                key.setTCPReceiveBufferSize("")
-                key.setTCPModerateReceiveBuffer(false)
-
-                engine.Engine.insert(key)
-                engine.Engine.start()
-            }
-            Log.e("Rzx","start vpn")
-//            proxyBinder.updateRunStatus(false)
-//            vpnInterface!!.close()
-//            vpnInterface=null
-        }
-
-        fun stopVpn() {
-            if (config.netType != 4){
-                engine.Engine.stop()
-                Log.e("Rzx","start stop")
-
-            }else {
-                NativeStopVpn(0)
-            }
-            Log.w(TAG, "VPNRunnable stopVpn")
-
-
-        }
-    }
 
     override fun unbindService(conn: ServiceConnection) {
         super.unbindService(conn)
     }
 
 
-
     public override fun onBind(intent: Intent) : IBinder {
         return proxyBinder
     }
-
 
     public class ProxyBinder(private val localVPNService: LocalVPNService) : Binder(){
 

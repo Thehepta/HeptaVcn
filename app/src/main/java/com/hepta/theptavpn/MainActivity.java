@@ -15,15 +15,17 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.navigation.NavigationView;
 import com.hepta.theptavpn.databinding.ActivityMainBinding;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private ActivityMainBinding binding;
     MainRecyclerAdapter adapter ;
@@ -31,9 +33,6 @@ public class MainActivity extends AppCompatActivity {
     private LocalVPNService vpnServiceBinder = null;
 
     public MainViewModel mainViewModel;
-
-
-
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +63,15 @@ public class MainActivity extends AppCompatActivity {
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new MainRecyclerAdapter(this);
         binding.recyclerView.setAdapter(adapter);
+
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        binding.drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+        binding.navView.setNavigationItemSelectedListener(this);
+        binding.version.setText(BuildConfig.VERSION_NAME);
+
+
 
         setupViewModel();
         Intent vpnIntent = VpnService.prepare(MainActivity.this);
@@ -119,9 +127,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
-            case R.id.filter_config:
-                Log.e("Rzx","filter_config");
-                return true;
+
             case R.id.add_config:
                 Log.e("Rzx","add_config");
                 startActivity(new Intent().setClass (MainActivity.this, ConfigActivity.class));
@@ -171,26 +177,22 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-//        engine.Key key = new Key();
-//        key.setMark(0);
-//        key.setMTU(0);
-//        key.setDevice("fd://" + tunDevice.getFd()); // <--- here
-//        key.setInterface("");
-//        key.setLogLevel("debug");
-//        key.setProxy("socks5://127.0.0.1:1080"); // <--- and here
-//        key.setRestAPI("");
-//        key.setTCPSendBufferSize("");
-//        key.setTCPReceiveBufferSize("");
-//        key.setTCPModerateReceiveBuffer(false);
-//
-//        engine.Engine.insert(key);
-//        engine.Engine.start();
-
-
 
     }
     public void stopVpnService() {
         vpnServiceBinder.stopVpnService();
     }
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()){
+
+            case R.id.settings :{
+                startActivity(new Intent(this, SettingsActivity.class));
+            }
+        }
+
+        return false;
+    }
 }

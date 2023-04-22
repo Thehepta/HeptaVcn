@@ -1,11 +1,39 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="30dp"
+    android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/activity_settings"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/layout_margin_top_height"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/server_lab_NetWork_Type" />
+
+            <Spinner
+                android:id="@+id/app_filter"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/edit_height"
+                android:entries="@array/filterApp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/app_select"
+            style="@style/mid_layout">
+            <TextView style="@style/usertext" android:text="Select Application" />
+            <ImageView style="@style/img_arrow"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/app_clear"
+            style="@style/mid_layout">
+            <TextView style="@style/usertext" android:text="Clear Application" />
+            <ImageView style="@style/img_arrow"/>
+        </LinearLayout>
 
 </LinearLayout>

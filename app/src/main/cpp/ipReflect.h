@@ -19,7 +19,7 @@
 #define CREATE_SOCKET_ERROR -1
 #define CREATE_SOCKET_ERROR -1
 
-extern int ipReflect_start(int fd, char *pJstring, int i);
+extern int ipReflect_start(int tun_fd, char *pJstring, int i);
 
 extern int ipReflect_stop();
 

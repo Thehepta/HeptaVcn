@@ -32,7 +32,6 @@
 
         <activity
             android:name=".appListActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:exported="true">
         </activity>
 
@@ -48,21 +47,14 @@
             </intent-filter>
         </service>
 
-        <service
-            android:name=".vpnfirewall.ReflectorVpnService"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.BIND_VPN_SERVICE">
-
-            <intent-filter>
-                <action android:name="android.net.VpnService"/>
-            </intent-filter>
-        </service>
-
         <activity
             android:exported="false"
             android:name=".ConfigActivity"
             android:windowSoftInputMode="stateUnchanged" />
+
+        <activity
+            android:exported="false"
+            android:name=".SettingsActivity" />
     </application>
 
 </manifest>

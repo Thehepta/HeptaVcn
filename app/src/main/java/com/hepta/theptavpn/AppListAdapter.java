@@ -1,7 +1,6 @@
 package com.hepta.theptavpn;
 
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.widget.CompoundButton;
@@ -15,17 +14,17 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 public class AppListAdapter extends BaseQuickAdapter<AppListAdapter.AppInfo, BaseViewHolder>  {
 
 
+    private onListener listener;
+
+
     public AppListAdapter(int layoutResId) {
         super(layoutResId);
     }
 
-//    @Override
-//    protected void onItemViewHolderCreated(@NotNull BaseViewHolder viewHolder, int viewType) {
-//        // 绑定 view
-//        DataBindingUtil.bind(viewHolder.itemView);
-//    }
 
-
+    public void setOnAppSelectListener( onListener listener){
+        this .listener = listener;
+    }
     @Override
     protected void convert(@NonNull BaseViewHolder baseViewHolder, AppInfo item) {
         if (item == null) {
@@ -36,12 +35,21 @@ public class AppListAdapter extends BaseQuickAdapter<AppListAdapter.AppInfo, Bas
         baseViewHolder.setText(R.id.description, item.getPackageName());
         baseViewHolder.setImageDrawable(R.id.app_icon,item.getIcon());
         SwitchCompat switchCompat = baseViewHolder.findView(R.id.switcher);
-        switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                item.setEnable(isChecked);
-            }
-        });
+        switchCompat.setChecked(item.getEnable());
+
+
+
+        if (switchCompat != null) {
+            switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    item.setEnable(isChecked);
+                    if(listener!= null){
+                        listener.OnListener(isChecked,item.getPackageName());
+                    }
+                }
+            });
+        }
 //        ListItemRxmoduleBinding binding = DataBindingUtil.getBinding(baseViewHolder.itemView);
 //        if (binding != null) {
 //            binding.setModuleInfo(moduleInfo);   //setAppInfo 这个函数就是在xml 文件中设置的data variable 里的name,后面的类名和这里直接对应
@@ -79,12 +87,16 @@ public class AppListAdapter extends BaseQuickAdapter<AppListAdapter.AppInfo, Bas
             return icon;
         }
 
-        public boolean isEnable() {
+        public boolean getEnable() {
             return enable;
         }
 
         public void setEnable(boolean enable) {
             this.enable = enable;
         }
+    }
+
+    public interface  onListener{
+        void OnListener(boolean status,String pKgName);
     }
 }

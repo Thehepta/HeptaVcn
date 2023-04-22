@@ -10,15 +10,20 @@ object MmkvManager {
     const val ID_SERVER_CONFIG = "SERVER_CONFIG"
     const val ID_SERVER_RAW = "SERVER_RAW"
     const val ID_SERVER_AFF = "SERVER_AFF"
-    const val ID_SUB = "SUB"
     const val ID_SETTING = "SETTING"
     const val KEY_SELECTED_SERVER = "SELECTED_SERVER"
     const val KEY_ANG_CONFIGS = "ANG_CONFIGS"
 
+    const val KEY_APP_FILTER = "APP_FILTER"
+    const val KEY_APP_ALLWO_BYPASS = 0
+    const val KEY_APP_ADD_ALLOW = 1
+    const val KEY_APP_ADD_DIS_ALLOW = 2
+
+
     private val mainStorage by lazy { MMKV.mmkvWithID(ID_MAIN, MMKV.MULTI_PROCESS_MODE) }
     private val serverStorage by lazy { MMKV.mmkvWithID(ID_SERVER_CONFIG, MMKV.MULTI_PROCESS_MODE) }
     private val serverAffStorage by lazy { MMKV.mmkvWithID(ID_SERVER_AFF, MMKV.MULTI_PROCESS_MODE) }
-    private val subStorage by lazy { MMKV.mmkvWithID(ID_SUB, MMKV.MULTI_PROCESS_MODE) }
+    private val setStorage by lazy { MMKV.mmkvWithID(ID_SETTING, MMKV.MULTI_PROCESS_MODE) }
 
 
     fun decodeServerList(): MutableList<String> {
@@ -54,12 +59,6 @@ object MmkvManager {
         }
         return key
     }
-
-
-
-
-
-
     private fun getUuid() :String{
         return try {
             UUID.randomUUID().toString().replace("-", "")
@@ -84,4 +83,26 @@ object MmkvManager {
     }
 
 
+
+    fun decodeApplicationList(): MutableList<String> {
+        val json = setStorage?.decodeString(KEY_APP_FILTER)
+        return if (json.isNullOrBlank()) {
+            mutableListOf()
+        } else {
+            Gson().fromJson(json, Array<String>::class.java).toMutableList()
+        }
+    }
+
+    fun encodeApplicationList( list :MutableList<String>) {
+        val json = Gson().toJson(list)
+        setStorage?.encode(KEY_APP_FILTER,json)
+    }
+
+        fun getAllowType() :Int {
+        return setStorage.decodeInt("Type",0)
+    }
+
+    fun setAllowType(type:Int) {
+        setStorage.encode("Type", type)
+    }
 }
