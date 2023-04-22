@@ -1,2 +1,0 @@
-ninja: Entering directory `D:\git\theptavpn\libevent\.cxx\Debug\c16g1j1h\arm64-v8a'
-ninja: no work to do.
