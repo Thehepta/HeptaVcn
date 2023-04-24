@@ -19,4 +19,10 @@
     <string name="del_config_comfirm">Confirm delete？</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
+
+    <string translatable="false" name="notify_channel_id">MyDefaultChannelID</string>
+    <string translatable="false" name="notify_channel_name">MyDefaultChannelName</string>
+    <string translatable="false" name="notify_channel_description">MyDefaultChannelDescription</string>
+
 </resources>

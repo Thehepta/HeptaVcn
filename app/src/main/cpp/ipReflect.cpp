@@ -84,11 +84,13 @@ int ipReflect_start(int tun_fd, char *ipaddr_str, int tcp_port) {
     struct event* ev = nullptr;
     evbase = event_base_new();
     struct bufferevent *Tun_BufEv, *UdpBufEv;
+    int err=0;
     socklen_t server_len = sizeof(struct sockaddr_in);
 
     if ((tcp_control_sock_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("socket()");
-        return CREATE_SOCKET_ERROR;
+        err = CREATE_SOCKET_ERROR;
+        goto out1;
     }
 
 
@@ -100,7 +102,9 @@ int ipReflect_start(int tun_fd, char *ipaddr_str, int tcp_port) {
     /* connection request */
     if (connect(tcp_control_sock_fd, (struct sockaddr*) &remote, server_len) < 0) {
         perror("connect()");
-        return CONNECT_SERVER_ERROR;
+        err = CONNECT_SERVER_ERROR;
+        goto out1;
+
     }
     srand((unsigned)time(NULL));
     flag_srandom = rand();
@@ -119,7 +123,8 @@ int ipReflect_start(int tun_fd, char *ipaddr_str, int tcp_port) {
     udp_Tunnel_fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (connect(udp_Tunnel_fd, (struct sockaddr *) &udp_send_sock, server_len)) {
         LOGE("connect failed\n");
-        return CONNECT_TUNNEL_ERROR;
+        err = CONNECT_TUNNEL_ERROR;
+        goto out2;
 
     }
     write_int(udp_Tunnel_fd, flag_srandom);
@@ -148,11 +153,11 @@ int ipReflect_start(int tun_fd, char *ipaddr_str, int tcp_port) {
     event_free(ev);
     bufferevent_free(UdpBufEv);
     bufferevent_free(Tun_BufEv);
+    out2:
     close(udp_Tunnel_fd);
+    out1:
     close(tcp_control_sock_fd);
-    close(tun_fd);
     LOGE("ipReflect_start exit");
-
     return 0;
 
 }

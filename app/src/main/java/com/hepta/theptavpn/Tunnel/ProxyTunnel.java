@@ -6,7 +6,7 @@ public abstract class ProxyTunnel {
 
     public ServerConfig config ;
     public int NetInterface;
-    public  abstract void start();
+    public  abstract Boolean start();
     public abstract void stop();
 
 

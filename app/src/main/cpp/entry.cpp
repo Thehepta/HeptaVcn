@@ -63,12 +63,14 @@ void *ThreadFun(void *tun_interface)
 
 
 extern "C"
-JNIEXPORT void JNICALL
+JNIEXPORT int JNICALL
 Java_com_hepta_theptavpn_Tunnel_IPreflectorTunnel_NativeStartVpn(JNIEnv *env, jobject thiz, int interface, jstring ipaddr,int port) {
     // TODO: implement setTunFd()
 
     char * ipaddr_str = const_cast<char *>(env->GetStringUTFChars(ipaddr, NULL));
-    ipReflect_start(interface, ipaddr_str, port);
+    int ret = ipReflect_start(interface, ipaddr_str, port);
+    close(interface);
+    return ret;
 }
 
 extern "C"

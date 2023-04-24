@@ -23,12 +23,16 @@ class MainRecyclerAdapter(val activity: MainActivity) : RecyclerView.Adapter<Mai
 
     var isRunning = false
 
-    override fun getItemCount() = mActivity.mainViewModel.serversCache.size
+
+    override fun getItemCount(): Int {
+        return mActivity.mainViewModel?.serversCache?.size!!
+    }
+
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         if (holder is MainViewHolder) {
-            val guid = mActivity.mainViewModel.serversCache[position].guid
-            val config = mActivity.mainViewModel.serversCache[position].config
+            val guid = mActivity.mainViewModel!!.serversCache[position].guid
+            val config = mActivity.mainViewModel!!.serversCache[position].config
 
 
             holder.itemMainBinding.tvName.text = config.remarks
@@ -92,9 +96,9 @@ class MainRecyclerAdapter(val activity: MainActivity) : RecyclerView.Adapter<Mai
                 if (guid != selected) {
                     mainStorage?.encode(MmkvManager.KEY_SELECTED_SERVER, guid)
                     if (!TextUtils.isEmpty(selected)) {
-                        notifyItemChanged(mActivity.mainViewModel.getPosition(selected!!))
+                        notifyItemChanged(mActivity.mainViewModel!!.getPosition(selected!!))
                     }
-                    notifyItemChanged(mActivity.mainViewModel.getPosition(guid))
+                    notifyItemChanged(mActivity.mainViewModel!!.getPosition(guid))
 //                    if (isRunning) {
 //                        mActivity.showCircle()
 //                        Utils.stopVService(mActivity)
@@ -112,9 +116,9 @@ class MainRecyclerAdapter(val activity: MainActivity) : RecyclerView.Adapter<Mai
     }
 
     private  fun removeServer(guid: String,position:Int) {
-        mActivity.mainViewModel.removeServer(guid)
+        mActivity.mainViewModel?.removeServer(guid)
         notifyItemRemoved(position)
-        notifyItemRangeChanged(position, mActivity.mainViewModel.serversCache.size)
+        mActivity.mainViewModel?.serversCache?.let { notifyItemRangeChanged(position, it.size) }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
@@ -122,7 +126,7 @@ class MainRecyclerAdapter(val activity: MainActivity) : RecyclerView.Adapter<Mai
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position == mActivity.mainViewModel.serversCache.size) {
+        return if (position == mActivity.mainViewModel?.serversCache?.size) {
             VIEW_TYPE_FOOTER
         } else {
             VIEW_TYPE_ITEM

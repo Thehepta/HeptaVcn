@@ -8,12 +8,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import engine.Key;
-
 public class IPreflectorTunnel extends ProxyTunnel{
 
 
-    private native void NativeStartVpn(int fd, String ipaddr, int port);
+    private native int NativeStartVpn(int fd, String ipaddr, int port);
     private native void NativeStopVpn();
 
     private ExecutorService executorService;
@@ -28,7 +26,7 @@ public class IPreflectorTunnel extends ProxyTunnel{
 
 
     @Override
-    public void start() {
+    public Boolean start() {
         runnable = new Thread() {
             @Override
             public void run() {
@@ -46,15 +44,15 @@ public class IPreflectorTunnel extends ProxyTunnel{
 
         executorService.submit(runnable);
         executorService.shutdown();
+        return runnable.isAlive();
     }
 
     @Override
     public void stop() {
         Log.e("Rzx","stop");
-//        runnable.interrupt();
         NativeStopVpn();
         try{
-            executorService.awaitTermination(30 , TimeUnit.SECONDS);
+            executorService.awaitTermination(1 , TimeUnit.SECONDS);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -62,7 +60,4 @@ public class IPreflectorTunnel extends ProxyTunnel{
         Log.e("Rzx","stop end");
 
     }
-
-
-
 }

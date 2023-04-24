@@ -2,7 +2,6 @@ package com.hepta.theptavpn
 
 import android.app.PendingIntent
 import android.content.Intent
-import android.content.ServiceConnection
 import android.net.VpnService
 import android.os.*
 import android.util.Log
@@ -10,25 +9,17 @@ import android.widget.Toast
 import com.hepta.theptavpn.Tunnel.IPreflectorTunnel
 import com.hepta.theptavpn.Tunnel.ProxyTunnel
 import com.hepta.theptavpn.Tunnel.tun2sockTunnel
-import com.tencent.mmkv.MMKV
 import java.net.InetAddress
 import java.net.UnknownHostException
+
 
 class LocalVPNService : VpnService() {
 
 
-    private val pendingIntent: PendingIntent? = null
     private var proxyBinder = LocalVPNService.ProxyBinder(this@LocalVPNService)
     private var tunnel: ProxyTunnel? =null
-    private var Running:Boolean = false
-    override fun onCreate() {
-        super.onCreate()
-    }
-
+    public var Running: Boolean?=false
     private fun setupVPN(): ParcelFileDescriptor? {
-
-
-
         val builder: Builder = Builder()
         builder.addAddress(VPN_ADDRESS, 30) //第二个参数子网掩码
         try {
@@ -40,8 +31,7 @@ class LocalVPNService : VpnService() {
         builder.setMtu(MTU)
         val allow_type = MmkvManager.getAllowType()
         when(allow_type){
-            MmkvManager.KEY_APP_ALLWO_BYPASS-> builder.allowBypass();
-
+            MmkvManager.KEY_APP_ALLWO_NONE-> {}
             MmkvManager.KEY_APP_ADD_ALLOW-> {
                 val applist  = MmkvManager.decodeApplicationList()
                 for (appPkg in applist){
@@ -54,12 +44,14 @@ class LocalVPNService : VpnService() {
                     builder.addDisallowedApplication(appPkg)
                 }
             }
+            MmkvManager.KEY_APP_ALLWO_BYPASS-> builder.allowBypass();
+
         }
+//        builder.setConfigureIntent(mConfigureIntent!!);
         val vpnInterface = builder.setSession(getString(R.string.app_name)).establish()
         return vpnInterface
 
     }
-
     private fun getTunnelType(config: ServerConfig, fd: Int): ProxyTunnel {
 
         if (config.netType == 0) {
@@ -69,21 +61,20 @@ class LocalVPNService : VpnService() {
         }
     }
 
-
-
     public fun stopVpnService(){
         tunnel?.stop()
-        Running = false
-
-
+        proxyBinder.updateRunStatus(false);
     }
 
-    public fun startVpnService(guid:String): Boolean{
+    public fun startVpnService(guid:String){
         val config = MmkvManager.decodeServerConfig(guid)
-        tunnel = getTunnelType(config!!, setupVPN()!!.detachFd())
-        tunnel?.start()
-        Running = true
-        return true
+        setupVPN()?.let {
+            val fd = it.detachFd()
+            tunnel = getTunnelType(config!!, fd)
+            proxyBinder.updateRunStatus(tunnel?.start()!!);
+
+        }
+
     }
 
     private fun showDialog(msg: String) {
@@ -91,42 +82,45 @@ class LocalVPNService : VpnService() {
         handlerThree.post { Toast.makeText(applicationContext, msg, Toast.LENGTH_LONG).show() }
     }
 
+    public override fun onRevoke() {
+        Log.e("Rzx","onRevoke")
+        stopVpnService()
+        proxyBinder.updateRunStatus(false);
+        super.onRevoke()
 
-    override fun unbindService(conn: ServiceConnection) {
-        super.unbindService(conn)
     }
-
-
     public override fun onBind(intent: Intent) : IBinder {
+        //前面这几行很重要，否则无法调用 onRevoke
+        val action = if (intent != null) intent.action else null
+        if (action != null && action == SERVICE_INTERFACE) {
+            return super.onBind(intent)!!
+        }
         return proxyBinder
     }
 
     public class ProxyBinder(private val localVPNService: LocalVPNService) : Binder(){
 
         private var mainActivity : MainActivity?= null
-
-        public fun getMovieService(activity: MainActivity) : LocalVPNService{
+        public fun getLocalVPNService(activity: MainActivity) : LocalVPNService{
             mainActivity = activity
             return localVPNService
         }
 
         public fun updateRunStatus( status:Boolean){
             mainActivity?.mainViewModel?.isRunning?.postValue(status)
+            localVPNService.Running=status
         }
+
     }
 
     companion object {
         init {
             System.loadLibrary("theptavpn")
         }
-
-        const val ACTION_DISCONNECT = "ACTION_DISCONNECT"
         private const val MTU = 1400
         private val TAG = LocalVPNService::class.java.simpleName
-
         //    private static final String VPN_ADDRESS = "192.168.0.101"; // Only IPv4 support for now 掩码 24
         private const val VPN_ADDRESS = "10.0.0.2" // Only IPv4 support for now
-
         //    private static final String VPN_ROUTE = "192.168.0.0"; // Intercept everything  掩码 24
         private const val VPN_ROUTE = "0.0.0.0" // Intercept everything
 

@@ -9,8 +9,8 @@ android {
 
     defaultConfig {
         applicationId "com.hepta.theptavpn"
-        minSdk 28
-        targetSdk 33
+        minSdk 21
+        targetSdk 31
         versionCode 1
         versionName "1.0"
 
@@ -70,8 +70,9 @@ dependencies {
     implementation 'com.tencent:mmkv:1.2.15'
     implementation 'com.github.jorgecastilloprz:fabprogresscircle:1.01@aar'
     implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.core:core-ktx:1.10.0'
     implementation 'androidx.preference:preference:1.2.0'
+    implementation 'com.github.isradeleon:Notify-Android:1.0.5' // updated for Android X
 
 
     testImplementation 'junit:junit:4.13.2'

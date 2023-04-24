@@ -15,9 +15,10 @@ object MmkvManager {
     const val KEY_ANG_CONFIGS = "ANG_CONFIGS"
 
     const val KEY_APP_FILTER = "APP_FILTER"
-    const val KEY_APP_ALLWO_BYPASS = 0
+    const val KEY_APP_ALLWO_NONE = 0
     const val KEY_APP_ADD_ALLOW = 1
     const val KEY_APP_ADD_DIS_ALLOW = 2
+    const val KEY_APP_ALLWO_BYPASS = 3
 
 
     private val mainStorage by lazy { MMKV.mmkvWithID(ID_MAIN, MMKV.MULTI_PROCESS_MODE) }

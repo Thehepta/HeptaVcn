@@ -27,7 +27,7 @@ public class tun2sockTunnel extends ProxyTunnel {
         key.setMTU(0);
         key.setDevice("fd://" + fd); // <--- here
         key.setInterface("");
-        key.setLogLevel("debug");
+        key.setLogLevel("error");
         key.setProxy(proxy); // <--- and here
         key.setRestAPI("");
         key.setTCPSendBufferSize("");
@@ -37,8 +37,9 @@ public class tun2sockTunnel extends ProxyTunnel {
     }
 
     @Override
-    public void start() {
+    public Boolean start() {
         engine.Engine.start();
+        return true;
     }
 
     @Override
