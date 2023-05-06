@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1411ad17-77ef-47e6-9eab-867a91b5382a" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/TUNstart.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TUNstop.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ip_reflection_client.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tproxy.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/v2_start.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/v2_stop.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/build.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/proguard-rules.pro" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/androidTest/java/com/hepta/checkvpn/ExampleInstrumentedTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/AndroidManifest.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/cpp/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/cpp/check.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/java/com/hepta/checkvpn/InetAddressesInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/java/com/hepta/checkvpn/MainActivity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/java/com/hepta/checkvpn/Shell.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/drawable-v24/ic_launcher_foreground.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/drawable/ic_launcher_background.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/layout/activity_main.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-anydpi-v33/ic_launcher.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-hdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-hdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-mdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-mdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-xhdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-xhdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-xxhdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/values-night/themes.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/values/colors.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/values/strings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/values/themes.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../checkvpn/src/test/java/com/hepta/checkvpn/ExampleUnitTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/udp_client.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/tproxy.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/udp_server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/ip_reflection_server.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/cpp/entry.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/cpp/entry.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/cpp/ipReflect.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/cpp/ipReflect.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/cpp/ipReflect.h" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/cpp/check.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/hepta/theptavpn/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/hepta/theptavpn/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../settings.gradle" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2022" />
+    <option name="minorVersion" value="2" />
+  </component>
+  <component name="ProjectId" id="2ONUWVXHEjjbwK8cxQ0Yg0Rgwvg" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/chic/AndroidStudioProjects/TheptaVpn/TunnelServer&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="virtualnet" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="12345" REDIRECT_INPUT="false" ELEVATE="true" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Project" TARGET_NAME="virtualnet" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Project" RUN_TARGET_NAME="virtualnet">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1411ad17-77ef-47e6-9eab-867a91b5382a" name="Changes" comment="" />
+      <created>1681400564630</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1681400564630</updated>
+      <workItem from="1681400565734" duration="9868000" />
+      <workItem from="1681451900386" duration="17946000" />
+      <workItem from="1681791815522" duration="3117000" />
+      <workItem from="1682095704637" duration="877000" />
+      <workItem from="1682144330146" duration="1420000" />
+      <workItem from="1682408489720" duration="522000" />
+      <workItem from="1682412728462" duration="1948000" />
+      <workItem from="1682423335928" duration="2515000" />
+      <workItem from="1682428749862" duration="706000" />
+      <workItem from="1682429788306" duration="2936000" />
+      <workItem from="1682433360172" duration="6693000" />
+      <workItem from="1682521053521" duration="15837000" />
+      <workItem from="1682675705239" duration="2341000" />
+      <workItem from="1682696420460" duration="4070000" />
+      <workItem from="1682732382788" duration="4335000" />
+      <workItem from="1682748895626" duration="3770000" />
+      <workItem from="1682755262962" duration="890000" />
+      <workItem from="1682846112933" duration="19866000" />
+      <workItem from="1682913705912" duration="9463000" />
+      <workItem from="1683283116548" duration="1898000" />
+      <workItem from="1683291095709" duration="1650000" />
+      <workItem from="1683301076225" duration="815000" />
+      <workItem from="1683301952092" duration="6061000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

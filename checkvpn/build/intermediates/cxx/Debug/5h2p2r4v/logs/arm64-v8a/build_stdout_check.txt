@@ -1,0 +1,2 @@
+ninja: Entering directory `/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/.cxx/Debug/5h2p2r4v/arm64-v8a'
+ninja: no work to do.

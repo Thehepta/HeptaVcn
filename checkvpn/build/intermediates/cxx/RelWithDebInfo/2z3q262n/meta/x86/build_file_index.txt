@@ -1,0 +1,1 @@
+/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/cpp/CMakeLists.txt

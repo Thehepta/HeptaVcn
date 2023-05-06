@@ -1,0 +1,95 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.hepta.checkvpn"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="24"
+8-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml
+9        android:targetSdkVersion="33" />
+9-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:6:5-66
+11-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:6:22-64
+12    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+12-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:7:5-79
+12-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:7:22-76
+13    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+13-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:8:5-79
+13-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:8:22-76
+14    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+14-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:9:5-10:47
+14-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:9:22-70
+15
+16    <permission
+16-->[androidx.core:core:1.9.0] /home/chic/.gradle/caches/transforms-3/9fdb9fadb17d85be93915a4f5de27155/transformed/core-1.9.0/AndroidManifest.xml:22:5-24:47
+17        android:name="com.hepta.checkvpn.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+17-->[androidx.core:core:1.9.0] /home/chic/.gradle/caches/transforms-3/9fdb9fadb17d85be93915a4f5de27155/transformed/core-1.9.0/AndroidManifest.xml:23:9-81
+18        android:protectionLevel="signature" />
+18-->[androidx.core:core:1.9.0] /home/chic/.gradle/caches/transforms-3/9fdb9fadb17d85be93915a4f5de27155/transformed/core-1.9.0/AndroidManifest.xml:24:9-44
+19
+20    <uses-permission android:name="com.hepta.checkvpn.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+20-->[androidx.core:core:1.9.0] /home/chic/.gradle/caches/transforms-3/9fdb9fadb17d85be93915a4f5de27155/transformed/core-1.9.0/AndroidManifest.xml:26:5-97
+20-->[androidx.core:core:1.9.0] /home/chic/.gradle/caches/transforms-3/9fdb9fadb17d85be93915a4f5de27155/transformed/core-1.9.0/AndroidManifest.xml:26:22-94
+21
+22    <application
+22-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:11:5-26:19
+23        android:allowBackup="true"
+23-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:12:9-35
+24        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+24-->[androidx.core:core:1.9.0] /home/chic/.gradle/caches/transforms-3/9fdb9fadb17d85be93915a4f5de27155/transformed/core-1.9.0/AndroidManifest.xml:28:18-86
+25        android:debuggable="true"
+26        android:extractNativeLibs="false"
+27        android:icon="@mipmap/ic_launcher"
+27-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:13:9-43
+28        android:label="@string/app_name"
+28-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:14:9-41
+29        android:supportsRtl="true"
+29-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:15:9-35
+30        android:testOnly="true"
+31        android:theme="@style/Theme.TheptaVpn" >
+31-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:16:9-47
+32        <activity
+32-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:17:9-25:20
+33            android:name="com.hepta.checkvpn.MainActivity"
+33-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:18:13-41
+34            android:exported="true" >
+34-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:19:13-36
+35            <intent-filter>
+35-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:20:13-24:29
+36                <action android:name="android.intent.action.MAIN" />
+36-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:21:17-69
+36-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:21:25-66
+37
+38                <category android:name="android.intent.category.LAUNCHER" />
+38-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:23:17-77
+38-->/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/src/main/AndroidManifest.xml:23:27-74
+39            </intent-filter>
+40        </activity>
+41
+42        <provider
+42-->[androidx.emoji2:emoji2:1.2.0] /home/chic/.gradle/caches/transforms-3/7eb9110b85ec077fab9b004a0e474b87/transformed/emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
+43            android:name="androidx.startup.InitializationProvider"
+43-->[androidx.emoji2:emoji2:1.2.0] /home/chic/.gradle/caches/transforms-3/7eb9110b85ec077fab9b004a0e474b87/transformed/emoji2-1.2.0/AndroidManifest.xml:25:13-67
+44            android:authorities="com.hepta.checkvpn.androidx-startup"
+44-->[androidx.emoji2:emoji2:1.2.0] /home/chic/.gradle/caches/transforms-3/7eb9110b85ec077fab9b004a0e474b87/transformed/emoji2-1.2.0/AndroidManifest.xml:26:13-68
+45            android:exported="false" >
+45-->[androidx.emoji2:emoji2:1.2.0] /home/chic/.gradle/caches/transforms-3/7eb9110b85ec077fab9b004a0e474b87/transformed/emoji2-1.2.0/AndroidManifest.xml:27:13-37
+46            <meta-data
+46-->[androidx.emoji2:emoji2:1.2.0] /home/chic/.gradle/caches/transforms-3/7eb9110b85ec077fab9b004a0e474b87/transformed/emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
+47                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+47-->[androidx.emoji2:emoji2:1.2.0] /home/chic/.gradle/caches/transforms-3/7eb9110b85ec077fab9b004a0e474b87/transformed/emoji2-1.2.0/AndroidManifest.xml:30:17-75
+48                android:value="androidx.startup" />
+48-->[androidx.emoji2:emoji2:1.2.0] /home/chic/.gradle/caches/transforms-3/7eb9110b85ec077fab9b004a0e474b87/transformed/emoji2-1.2.0/AndroidManifest.xml:31:17-49
+49            <meta-data
+49-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/chic/.gradle/caches/transforms-3/8be74207a00be497da693973d4388a22/transformed/lifecycle-process-2.4.1/AndroidManifest.xml:31:13-33:52
+50                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+50-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/chic/.gradle/caches/transforms-3/8be74207a00be497da693973d4388a22/transformed/lifecycle-process-2.4.1/AndroidManifest.xml:32:17-78
+51                android:value="androidx.startup" />
+51-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/chic/.gradle/caches/transforms-3/8be74207a00be497da693973d4388a22/transformed/lifecycle-process-2.4.1/AndroidManifest.xml:33:17-49
+52        </provider>
+53    </application>
+54
+55</manifest>
