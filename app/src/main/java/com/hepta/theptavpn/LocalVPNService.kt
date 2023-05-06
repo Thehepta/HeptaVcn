@@ -1,6 +1,5 @@
 package com.hepta.theptavpn
 
-import android.app.PendingIntent
 import android.content.Intent
 import android.net.VpnService
 import android.os.*
@@ -9,6 +8,7 @@ import android.widget.Toast
 import com.hepta.theptavpn.Tunnel.IPreflectorTunnel
 import com.hepta.theptavpn.Tunnel.ProxyTunnel
 import com.hepta.theptavpn.Tunnel.tun2sockTunnel
+import java.net.DatagramSocket
 import java.net.InetAddress
 import java.net.UnknownHostException
 
@@ -31,33 +31,34 @@ class LocalVPNService : VpnService() {
         builder.setMtu(MTU)
         val allow_type = MmkvManager.getAllowType()
         when(allow_type){
-            MmkvManager.KEY_APP_ALLWO_NONE-> {}
+            MmkvManager.KEY_APP_ALLWO_NONE-> {
+                builder.addDisallowedApplication(packageName)
+            }
             MmkvManager.KEY_APP_ADD_ALLOW-> {
-                val applist  = MmkvManager.decodeApplicationList()
+                builder.addAllowedApplication("")
+                val applist  = MmkvManager.decodeApplicationList(MmkvManager.KEY_APP_ADD_ALLOW)
                 for (appPkg in applist){
                     builder.addAllowedApplication(appPkg)
                 }
             }
             MmkvManager.KEY_APP_ADD_DIS_ALLOW-> {
-                val applist  = MmkvManager.decodeApplicationList()
+                builder.addDisallowedApplication(packageName)
+                val applist  = MmkvManager.decodeApplicationList(MmkvManager.KEY_APP_ADD_DIS_ALLOW)
                 for (appPkg in applist){
                     builder.addDisallowedApplication(appPkg)
                 }
             }
-            MmkvManager.KEY_APP_ALLWO_BYPASS-> builder.allowBypass();
-
         }
-//        builder.setConfigureIntent(mConfigureIntent!!);
         val vpnInterface = builder.setSession(getString(R.string.app_name)).establish()
         return vpnInterface
 
     }
-    private fun getTunnelType(config: ServerConfig, fd: Int): ProxyTunnel {
+    private fun getTunnelType(config: ServerConfig, parcelFileDescriptor: ParcelFileDescriptor): ProxyTunnel {
 
         if (config.netType == 0) {
-            return IPreflectorTunnel(config, fd)
+            return IPreflectorTunnel(config, parcelFileDescriptor)
         } else {
-            return tun2sockTunnel(config, fd)
+            return tun2sockTunnel(config, parcelFileDescriptor)
         }
     }
 
@@ -69,12 +70,13 @@ class LocalVPNService : VpnService() {
     public fun startVpnService(guid:String){
         val config = MmkvManager.decodeServerConfig(guid)
         setupVPN()?.let {
-            val fd = it.detachFd()
-            tunnel = getTunnelType(config!!, fd)
-            proxyBinder.updateRunStatus(tunnel?.start()!!);
-
+            tunnel = getTunnelType(config!!, it)
+            val run = tunnel?.start();
+            proxyBinder.updateRunStatus(run!!);
+            if(!run){
+                Log.e("Rzx","start vpn failed");
+            }
         }
-
     }
 
     private fun showDialog(msg: String) {

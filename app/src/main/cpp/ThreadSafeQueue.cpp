@@ -3,4 +3,3 @@
 //
 
 #include "ThreadSafeQueue.h"
-SIGURG

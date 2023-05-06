@@ -2,6 +2,7 @@ package com.hepta.theptavpn;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -33,13 +34,16 @@ public class appListActivity extends BaseActivity {
 
     private ActivityApplistBinding binding;
     List<AppListAdapter.AppInfo> launcherIconPackageList = new ArrayList<>();
-    List<String> enableList = MmkvManager.INSTANCE.decodeApplicationList();
+    List<String> enableList ;
+    int type;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityApplistBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        type = getIntent().getIntExtra("type",0);
+        enableList = MmkvManager.INSTANCE.decodeApplicationList(type);
         initRecycleView();
 
     }
@@ -78,13 +82,18 @@ public class appListActivity extends BaseActivity {
         //set MATCH_ALL to prevent any filtering of the results
         List<ResolveInfo> resolveInfos = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_ALL);
         for (ResolveInfo info: resolveInfos) {
-            AppListAdapter.AppInfo appInfo = new AppListAdapter.AppInfo(info.activityInfo.applicationInfo,mPm);
+
+            ApplicationInfo applicationInfo = info.activityInfo.applicationInfo;
+            if(applicationInfo.packageName.equals(getPackageName())){
+                continue;
+            }
+            AppListAdapter.AppInfo appInfo = new AppListAdapter.AppInfo(applicationInfo,mPm);
+
             if(enableList.contains(appInfo.getPackageName())){
                 appInfo.setEnable(true);
             }
             launcherIconPackageList.add(appInfo);
         }
-
         return launcherIconPackageList;
     }
 
@@ -95,7 +104,7 @@ public class appListActivity extends BaseActivity {
         menu.findItem(R.id.ok).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(@NonNull MenuItem item) {
-                MmkvManager.INSTANCE.encodeApplicationList(enableList);
+                MmkvManager.INSTANCE.encodeApplicationList(enableList,type);
                 finish();
                 return false;
             }

@@ -62,6 +62,7 @@ void __on_tcp_error(evutil_socket_t sockfd, short event, void* arg) {
 
 void __on_recv(struct bufferevent *read, void *ctx)
 {
+    LOGE("__on_recv");
     struct bufferevent *write = static_cast<bufferevent *>(ctx);
     struct evbuffer *src, *dst;
     src = bufferevent_get_input(read);
@@ -100,7 +101,9 @@ int ipReflect_start(int tun_fd, char *ipaddr_str, int tcp_port) {
     remote.sin_port = htons(tcp_port);
 
     /* connection request */
-    if (connect(tcp_control_sock_fd, (struct sockaddr*) &remote, server_len) < 0) {
+    LOGE("connect TEXT");
+    err = connect(tcp_control_sock_fd, (struct sockaddr*) &remote, server_len);
+    if ( err < 0) {
         perror("connect()");
         err = CONNECT_SERVER_ERROR;
         goto out1;
@@ -158,6 +161,6 @@ int ipReflect_start(int tun_fd, char *ipaddr_str, int tcp_port) {
     out1:
     close(tcp_control_sock_fd);
     LOGE("ipReflect_start exit");
-    return 0;
+    return err;
 
 }

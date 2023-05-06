@@ -1,5 +1,7 @@
 package com.hepta.theptavpn.Tunnel;
 
+import android.os.ParcelFileDescriptor;
+
 import com.hepta.theptavpn.ServerConfig;
 
 import engine.Key;
@@ -7,7 +9,7 @@ import engine.Key;
 public class tun2sockTunnel extends ProxyTunnel {
 
 
-    public tun2sockTunnel(ServerConfig config, int fd) {
+    public tun2sockTunnel(ServerConfig config, ParcelFileDescriptor fd) {
         super(config, fd);
         String proxy = "";
 
@@ -25,9 +27,10 @@ public class tun2sockTunnel extends ProxyTunnel {
         Key key = new Key();
         key.setMark(0);
         key.setMTU(0);
-        key.setDevice("fd://" + fd); // <--- here
+        key.setDevice("fd://" + fd.detachFd()); // <--- here
         key.setInterface("");
-        key.setLogLevel("error");
+//        key.setLogLevel("error");
+        key.setLogLevel("debug");
         key.setProxy(proxy); // <--- and here
         key.setRestAPI("");
         key.setTCPSendBufferSize("");

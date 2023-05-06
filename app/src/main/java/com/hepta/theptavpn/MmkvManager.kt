@@ -17,8 +17,10 @@ object MmkvManager {
     const val KEY_APP_FILTER = "APP_FILTER"
     const val KEY_APP_ALLWO_NONE = 0
     const val KEY_APP_ADD_ALLOW = 1
+    const val KEY_APP_ADD_ALLOW_LIST = "KEY_APP_ADD_ALLOW_LIST"
+
     const val KEY_APP_ADD_DIS_ALLOW = 2
-    const val KEY_APP_ALLWO_BYPASS = 3
+    const val KEY_APP_ADD_DIS_ALLOW_LIST = "KEY_APP_ADD_DIS_ALLOW_LIST"
 
 
     private val mainStorage by lazy { MMKV.mmkvWithID(ID_MAIN, MMKV.MULTI_PROCESS_MODE) }
@@ -85,8 +87,12 @@ object MmkvManager {
 
 
 
-    fun decodeApplicationList(): MutableList<String> {
-        val json = setStorage?.decodeString(KEY_APP_FILTER)
+    fun decodeApplicationList(type: Int): MutableList<String> {
+        val json = if (type==KEY_APP_ADD_ALLOW){
+            setStorage?.decodeString(KEY_APP_ADD_ALLOW_LIST)
+        }else{
+            setStorage?.decodeString(KEY_APP_ADD_DIS_ALLOW_LIST)
+        }
         return if (json.isNullOrBlank()) {
             mutableListOf()
         } else {
@@ -94,12 +100,16 @@ object MmkvManager {
         }
     }
 
-    fun encodeApplicationList( list :MutableList<String>) {
+    fun encodeApplicationList( list :MutableList<String>,type: Int) {
         val json = Gson().toJson(list)
-        setStorage?.encode(KEY_APP_FILTER,json)
+        if (type==KEY_APP_ADD_ALLOW){
+            setStorage?.encode(KEY_APP_ADD_ALLOW_LIST,json)
+        }else{
+            setStorage?.encode(KEY_APP_ADD_DIS_ALLOW_LIST,json)
+        }
     }
 
-        fun getAllowType() :Int {
+    fun getAllowType() :Int {
         return setStorage.decodeInt("Type",0)
     }
 

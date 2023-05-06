@@ -38,6 +38,10 @@
             android:exported="true">
         </activity>
 
+        <activity
+            android:name=".NSettingsActivity"
+            android:exported="true">
+        </activity>
 
         <service
             android:name=".LocalVPNService"

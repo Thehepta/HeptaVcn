@@ -55,7 +55,7 @@ public class SettingsActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 List<String> list = new ArrayList<>();
-                MmkvManager.INSTANCE.encodeApplicationList(list);
+//                MmkvManager.INSTANCE.encodeApplicationList(list,t);
             }
         });
     }

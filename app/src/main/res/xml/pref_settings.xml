@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+            android:key="pref_speed_enabled"
+            android:summary="@string/summary_pref_Debug_enabled"
+            android:title="@string/title_pref_Debug_enabled" />
+
+    <PreferenceCategory android:title="@string/title_AppProxy_settings">
+
+
+        <CheckBoxPreference
+            android:key="pref_per_app_proxy_none"
+            android:summary="@string/summary_pref_per_proxy_None"
+            android:title="@string/title_pref_proxy_None" />
+
+        <CheckBoxPreference
+            android:key="pref_per_app_proxy_allow"
+            android:summary="@string/summary_pref_per_proxy_allow"
+            android:title="@string/title_pref_proxy_allow" />
+        <Preference
+            android:key="pref_per_app_proxy_allow_list"
+            android:title="@string/title_pref_allow_list" />
+
+        <CheckBoxPreference
+            android:key="pref_per_app_proxy_disall"
+            android:summary="@string/summary_pref_per_proxy_disall"
+            android:title="@string/title_pref_proxy_disall" />
+        <Preference
+            android:key="pref_per_app_proxy_disall_list"
+            android:title="@string/title_pref_disall_list" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/title_Tun_settings">
+
+        <EditTextPreference
+            android:key="pref_vpn_dns"
+            android:summary="@string/summary_pref_tun_addr"
+            android:title="@string/title_pref_tun_addr" />
+
+        <EditTextPreference
+            android:key="pref_vpn_dns"
+            android:summary="@string/summary_pref_tun_netmask"
+            android:title="@string/title_pref_tun_netmask" />
+
+        <EditTextPreference
+            android:key="pref_vpn_dns"
+            android:summary="@string/summary_pref_tun_mtu"
+            android:title="@string/title_pref_tun_mtu" />
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -10,13 +10,21 @@
             android:icon="@drawable/ic_settings_white_24dp"
             android:title="@string/title_settings" />
 
+        <item
+            android:id="@+id/logcat"
+            android:icon="@drawable/ic_settings_white_24dp"
+            android:title="@string/title_logcat" />
+        <item
+            android:id="@+id/help"
+            android:icon="@drawable/ic_settings_white_24dp"
+            android:title="@string/title_help" />
     </group>
 
     <group android:id="@+id/group_id2">
         <item
-            android:id="@+id/logcat"
+            android:id="@+id/about"
             android:icon="@drawable/ic_logcat_white_24dp"
-            android:title="@string/title_logcat" />
+            android:title="@string/title_about" />
 
         <item
             android:id="@+id/feedback"

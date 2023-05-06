@@ -8,10 +8,9 @@
     </string-array>
 
     <string-array name="filterApp" translatable="false">
-        <item>Nonn</item>
+        <item>None</item>
         <item>addAllowedApplication</item>
         <item>addDisallowedApplication</item>
-        <item>allowBypass</item>
     </string-array>
 
 </resources>

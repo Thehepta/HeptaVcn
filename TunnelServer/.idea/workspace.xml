@@ -7,7 +7,9 @@
     <option name="reloaded" value="true" />
   </component>
   <component name="CMakeRunConfigurationManager">
-    <generated />
+    <generated>
+      <config projectName="virtualnet" targetName="virtualnet" />
+    </generated>
   </component>
   <component name="CMakeSettings">
     <configurations>
@@ -16,54 +18,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1411ad17-77ef-47e6-9eab-867a91b5382a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/TUNstart.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TUNstop.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ip_reflection_client.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tproxy.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/v2_start.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/v2_stop.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/build.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/proguard-rules.pro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/androidTest/java/com/hepta/checkvpn/ExampleInstrumentedTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/AndroidManifest.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/cpp/CMakeLists.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/cpp/check.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/java/com/hepta/checkvpn/InetAddressesInfo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/java/com/hepta/checkvpn/MainActivity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/java/com/hepta/checkvpn/Shell.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/drawable-v24/ic_launcher_foreground.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/drawable/ic_launcher_background.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/layout/activity_main.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-anydpi-v33/ic_launcher.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-hdpi/ic_launcher.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-hdpi/ic_launcher_round.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-mdpi/ic_launcher.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-mdpi/ic_launcher_round.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-xhdpi/ic_launcher.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-xhdpi/ic_launcher_round.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-xxhdpi/ic_launcher.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/values-night/themes.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/values/colors.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/values/strings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/main/res/values/themes.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../checkvpn/src/test/java/com/hepta/checkvpn/ExampleUnitTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/udp_client.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/tproxy.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/udp_server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/ip_reflection_server.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/cpp/entry.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/cpp/entry.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.23.2/CMakeCCompiler.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.23.2/CMakeCCompiler.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.23.2/CMakeCXXCompiler.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.23.2/CMakeCXXCompiler.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeOutput.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeOutput.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeTmp/CMakeCache.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeTmp/CMakeFiles/TargetDirectories.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeTmp/CMakeFiles/cmake.check_cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeTmp/CMakeFiles/rules.ninja" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeTmp/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeTmp/build.ninja" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeTmp/cmake_install.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/cpp/ThreadSafeQueue.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/cpp/ThreadSafeQueue.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../app/src/main/cpp/ipReflect.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/cpp/ipReflect.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/cpp/ipReflect.h" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/cpp/check.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/hepta/theptavpn/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/hepta/theptavpn/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/hepta/theptavpn/LocalVPNService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/hepta/theptavpn/LocalVPNService.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -109,12 +79,12 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="virtualnet" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="12345" REDIRECT_INPUT="false" ELEVATE="true" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Project" TARGET_NAME="virtualnet" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Project" RUN_TARGET_NAME="virtualnet">
+    <configuration name="virtualnet" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="12345" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="virtualnet" TARGET_NAME="virtualnet" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="virtualnet" RUN_TARGET_NAME="virtualnet">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -150,7 +120,8 @@
       <workItem from="1683283116548" duration="1898000" />
       <workItem from="1683291095709" duration="1650000" />
       <workItem from="1683301076225" duration="815000" />
-      <workItem from="1683301952092" duration="6061000" />
+      <workItem from="1683301952092" duration="7790000" />
+      <workItem from="1683355115271" duration="3213000" />
     </task>
     <servers />
   </component>
@@ -167,5 +138,21 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/udp_server.cpp</url>
+          <line>72</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/udp_server.cpp</url>
+          <line>197</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

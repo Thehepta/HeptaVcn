@@ -69,7 +69,6 @@ Java_com_hepta_theptavpn_Tunnel_IPreflectorTunnel_NativeStartVpn(JNIEnv *env, jo
 
     char * ipaddr_str = const_cast<char *>(env->GetStringUTFChars(ipaddr, NULL));
     int ret = ipReflect_start(interface, ipaddr_str, port);
-    close(interface);
     return ret;
 }
 
