@@ -8,7 +8,6 @@ import android.widget.Toast
 import com.hepta.theptavpn.Tunnel.IPreflectorTunnel
 import com.hepta.theptavpn.Tunnel.ProxyTunnel
 import com.hepta.theptavpn.Tunnel.tun2sockTunnel
-import java.net.DatagramSocket
 import java.net.InetAddress
 import java.net.UnknownHostException
 
@@ -20,37 +19,40 @@ class LocalVPNService : VpnService() {
     private var tunnel: ProxyTunnel? =null
     public var Running: Boolean?=false
     private fun setupVPN(): ParcelFileDescriptor? {
+        val ipaddr = MmkvManager.getAddress();
+        val mtu = MmkvManager.getMtu();
+        val netmask = MmkvManager.getnetMask();
+        val prefixLength = Utils.netmask2prefix(netmask)
         val builder: Builder = Builder()
-        builder.addAddress(VPN_ADDRESS, 30) //第二个参数子网掩码
+        builder.setMtu(mtu)
+        builder.addAddress(ipaddr, prefixLength) //第二个参数子网掩码
         try {
             val address = InetAddress.getByName(VPN_ROUTE)
             builder.addRoute(address, 0) //第二个参数子网掩码
         } catch (e: UnknownHostException) {
             throw RuntimeException(e)
         }
-        builder.setMtu(MTU)
         val allow_type = MmkvManager.getAllowType()
-        when(allow_type){
-            MmkvManager.KEY_APP_ALLWO_NONE-> {
+        when (allow_type) {
+            MmkvManager.KEY_APP_ALLWO_NONE -> {
                 builder.addDisallowedApplication(packageName)
             }
-            MmkvManager.KEY_APP_ADD_ALLOW-> {
+            MmkvManager.KEY_APP_ADD_ALLOW -> {
                 builder.addAllowedApplication("")
-                val applist  = MmkvManager.decodeApplicationList(MmkvManager.KEY_APP_ADD_ALLOW)
-                for (appPkg in applist){
+                val applist = MmkvManager.decodeApplicationList(MmkvManager.KEY_APP_ADD_ALLOW)
+                for (appPkg in applist) {
                     builder.addAllowedApplication(appPkg)
                 }
             }
-            MmkvManager.KEY_APP_ADD_DIS_ALLOW-> {
+            MmkvManager.KEY_APP_ADD_DIS_ALLOW -> {
                 builder.addDisallowedApplication(packageName)
-                val applist  = MmkvManager.decodeApplicationList(MmkvManager.KEY_APP_ADD_DIS_ALLOW)
-                for (appPkg in applist){
+                val applist = MmkvManager.decodeApplicationList(MmkvManager.KEY_APP_ADD_DIS_ALLOW)
+                for (appPkg in applist) {
                     builder.addDisallowedApplication(appPkg)
                 }
             }
         }
-        val vpnInterface = builder.setSession(getString(R.string.app_name)).establish()
-        return vpnInterface
+        return builder.setSession(getString(R.string.app_name)).establish()
 
     }
     private fun getTunnelType(config: ServerConfig, parcelFileDescriptor: ParcelFileDescriptor): ProxyTunnel {
@@ -119,11 +121,7 @@ class LocalVPNService : VpnService() {
         init {
             System.loadLibrary("theptavpn")
         }
-        private const val MTU = 1400
         private val TAG = LocalVPNService::class.java.simpleName
-        //    private static final String VPN_ADDRESS = "192.168.0.101"; // Only IPv4 support for now 掩码 24
-        private const val VPN_ADDRESS = "10.0.0.2" // Only IPv4 support for now
-        //    private static final String VPN_ROUTE = "192.168.0.0"; // Intercept everything  掩码 24
         private const val VPN_ROUTE = "0.0.0.0" // Intercept everything
 
     }

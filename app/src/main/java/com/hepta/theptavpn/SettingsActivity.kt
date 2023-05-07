@@ -2,14 +2,13 @@ package com.hepta.theptavpn
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.preference.CheckBoxPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
+import android.util.Log
+import androidx.preference.*
 
-class NSettingsActivity : BaseActivity() {
+class SettingsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_newset)
+        setContentView(R.layout.activity_setting)
         title = getString(R.string.title_settings)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }
@@ -22,6 +21,10 @@ class NSettingsActivity : BaseActivity() {
 
         private val proxy_disall by lazy { findPreference<CheckBoxPreference>("pref_per_app_proxy_disall") }
         private val proxy_disall_list by lazy { findPreference<Preference>("pref_per_app_proxy_disall_list") }
+
+        private val vpn_addr by lazy { findPreference<EditTextPreference>("pref_vpn_addr") }
+        private val vpn_netmask by lazy { findPreference<EditTextPreference>("pref_vpn_netmask") }
+        private val vpn_mtu by lazy { findPreference<EditTextPreference>("pref_vpn_mtu") }
 
         private val type by lazy { MmkvManager.getAllowType() }
 
@@ -82,8 +85,44 @@ class NSettingsActivity : BaseActivity() {
                 startActivity(Intent(requireActivity(), appListActivity::class.java).putExtra("type",MmkvManager.KEY_APP_ADD_DIS_ALLOW))
                 false
             }
+            
+            vpn_addr?.setOnPreferenceChangeListener { preference, newValue ->
+                val value = newValue as String
+                if(value.isNullOrBlank()){
+                    false
+                }else{
+                    MmkvManager.setAddress(value)
+                    preference.summary = value;
+                    true
+                }
+            }
+            vpn_netmask?.setOnPreferenceChangeListener { preference, newValue ->
+                val value = newValue as String
+                if(value.isNullOrBlank()){
+                    false
+                }else{
+                    MmkvManager.setnetMask(value)
+                    preference.summary = value;
+                    true
+                }
+            }
+            vpn_mtu?.setOnPreferenceChangeListener { preference, newValue ->
+                val value = newValue as String
+                if(value.isNullOrBlank()){
+                    false
+                }else{
+                    MmkvManager.setMtu(value.toInt())
+                    preference.summary = value;
+                    true
+                }
+            }
+        }
 
-
+        override fun onStart() {
+            super.onStart()
+            vpn_mtu?.setSummary(MmkvManager.getMtu().toString())
+            vpn_netmask?.setSummary(MmkvManager.getnetMask())
+            vpn_addr?.setSummary(MmkvManager.getAddress())
 
             when(type){
                 MmkvManager.KEY_APP_ALLWO_NONE->{
@@ -108,10 +147,7 @@ class NSettingsActivity : BaseActivity() {
                     proxy_disall_list?.isEnabled=true
                 }
             }
-        }
 
-        override fun onStart() {
-            super.onStart()
         }
     }
 

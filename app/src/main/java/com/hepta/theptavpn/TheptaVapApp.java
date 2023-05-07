@@ -30,17 +30,5 @@ public class TheptaVapApp extends Application {
         }
     }
 
-    static {
-//        Log.e("TheptaVapApp",getCallStatck());
-    }
 
-    public static String getCallStatck() {
-        Throwable ex = new Throwable();
-        StackTraceElement[] stackElements = ex.getStackTrace();
-        String result = "";
-        for (int i = 4; i < stackElements.length; i++) {
-            result = result +"\n" +stackElements[i].getClassName()+"."+stackElements[i].getFileName()+":"+stackElements[i].getMethodName()+"("+stackElements[i].getLineNumber()+")";
-        }
-        return result;
-    }
 }

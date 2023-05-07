@@ -32,17 +32,15 @@
             </intent-filter>
         </activity>
 
-
         <activity
-            android:name=".appListActivity"
-            android:exported="true">
+            android:name=".appListActivity">
         </activity>
 
         <activity
-            android:name=".NSettingsActivity"
-            android:exported="true">
+            android:name=".SettingsActivity">
         </activity>
-
+        <activity
+            android:name=".helpActivity" />
         <service
             android:name=".LocalVPNService"
             android:enabled="true"
@@ -55,13 +53,9 @@
         </service>
 
         <activity
-            android:exported="false"
             android:name=".ConfigActivity"
             android:windowSoftInputMode="stateUnchanged" />
 
-        <activity
-            android:exported="false"
-            android:name=".SettingsActivity" />
     </application>
 
 </manifest>

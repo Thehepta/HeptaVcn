@@ -32,18 +32,15 @@
     <PreferenceCategory android:title="@string/title_Tun_settings">
 
         <EditTextPreference
-            android:key="pref_vpn_dns"
-            android:summary="@string/summary_pref_tun_addr"
+            android:key="pref_vpn_addr"
             android:title="@string/title_pref_tun_addr" />
 
         <EditTextPreference
-            android:key="pref_vpn_dns"
-            android:summary="@string/summary_pref_tun_netmask"
+            android:key="pref_vpn_netmask"
             android:title="@string/title_pref_tun_netmask" />
 
         <EditTextPreference
-            android:key="pref_vpn_dns"
-            android:summary="@string/summary_pref_tun_mtu"
+            android:key="pref_vpn_mtu"
             android:title="@string/title_pref_tun_mtu" />
     </PreferenceCategory>
 </PreferenceScreen>

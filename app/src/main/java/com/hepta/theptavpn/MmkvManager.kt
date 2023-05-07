@@ -14,7 +14,6 @@ object MmkvManager {
     const val KEY_SELECTED_SERVER = "SELECTED_SERVER"
     const val KEY_ANG_CONFIGS = "ANG_CONFIGS"
 
-    const val KEY_APP_FILTER = "APP_FILTER"
     const val KEY_APP_ALLWO_NONE = 0
     const val KEY_APP_ADD_ALLOW = 1
     const val KEY_APP_ADD_ALLOW_LIST = "KEY_APP_ADD_ALLOW_LIST"
@@ -115,5 +114,30 @@ object MmkvManager {
 
     fun setAllowType(type:Int) {
         setStorage.encode("Type", type)
+    }
+
+
+    fun getAddress():String{
+        return setStorage.decodeString("address","10.0.0.1")!!
+
+    }
+    fun setAddress(address:String) {
+        setStorage.encode("address",address)
+    }
+
+    fun getnetMask():String{
+        return setStorage.decodeString("netmask","255.255.255.252")!!
+
+    }
+    fun setnetMask(address:String) {
+        setStorage.encode("netmask",address)
+    }
+
+    fun getMtu():Int{
+        return setStorage.decodeInt("mtu",1400)!!
+
+    }
+    fun setMtu(Mtu:Int) {
+        setStorage.encode("mtu",Mtu)
     }
 }

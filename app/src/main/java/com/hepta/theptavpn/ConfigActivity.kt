@@ -6,12 +6,10 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.AdapterView
-import androidx.appcompat.app.AppCompatActivity
+
 import com.hepta.theptavpn.MmkvManager.ID_MAIN
 import com.hepta.theptavpn.MmkvManager.KEY_SELECTED_SERVER
-import com.hepta.theptavpn.databinding.ActivityServerVmessBinding
+import com.hepta.theptavpn.databinding.ActivityConfigBinding
 import com.tencent.mmkv.MMKV
 
 class ConfigActivity : BaseActivity() {
@@ -24,10 +22,10 @@ class ConfigActivity : BaseActivity() {
                 && editGuid == mainStorage?.decodeString(KEY_SELECTED_SERVER)
     }
 
-    var binding: ActivityServerVmessBinding? = null
+    var binding: ActivityConfigBinding? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityServerVmessBinding.inflate(layoutInflater)
+        binding = ActivityConfigBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
 
         val config = MmkvManager.decodeServerConfig(editGuid)

@@ -27,7 +27,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.navigation.NavigationView
 import com.hepta.theptavpn.LocalVPNService.ProxyBinder
@@ -224,7 +223,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             Toast.makeText(this, "select a server", Toast.LENGTH_LONG).show()
         }
-
     }
 
     fun stopVpnService() {
@@ -235,7 +233,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.settings -> {
-                startActivity(Intent(this, NSettingsActivity::class.java))
+                startActivity(Intent(this, SettingsActivity::class.java))
+            }
+            R.id.about -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+            }
+            R.id.help -> {
+                startActivity(Intent(this, helpActivity::class.java))
             }
         }
         return false
