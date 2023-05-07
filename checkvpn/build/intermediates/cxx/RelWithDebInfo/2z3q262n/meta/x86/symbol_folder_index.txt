@@ -1,1 +1,0 @@
-/home/chic/AndroidStudioProjects/TheptaVpn/checkvpn/build/intermediates/cxx/RelWithDebInfo/2z3q262n/obj/x86
