@@ -1,10 +1,11 @@
-sudo ip rule add fwmark 1 table 100
-sudo ip route add local 0.0.0.0/0 dev lo table 100
+12000:	from all iif tun0 lookup local_network 
+13000:	from all fwmark 0x0/0x20000 iif lo uidrange 0-99999 lookup tun0 
+13000:	from all fwmark 0xc0089/0xcffff lookup tun0 
 
-sudo ip tuntap add tun111 mode tun
-sudo ip addr add 10.0.0.1/30 dev tun111
-sudo ip link set dev tun111  mtu 1500 up
+16000:	from all fwmark 0x10089/0x1ffff iif lo uidrange 0-99999 lookup tun0 
+16000:	from all fwmark 0x10089/0x1ffff iif lo uidrange 0-0 lookup tun0 
 
-sudo iptables -t mangle -A OUTPUT -p tcp -m tcp --dport 90 -j MARK --set-mark 1
+17000:	from all iif lo oif tun0 uidrange 0-99999 lookup tun0 
 
-iptables -A OUTPUT  -p tcp -m owner --uid-owner 10170 -j MARK --set-mark 1
+26000:	from all fwmark 0x0/0x10000 iif lo lookup wlan0_local 
+28000:	from all fwmark 0x89/0xffff lookup wlan0 

@@ -4,7 +4,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <csignal>
-#include "tool.h"
+#include "../tool.h"
 #include <iostream>
 #include <event2/event.h>
 #include <event2/bufferevent.h>
@@ -12,7 +12,11 @@
 #include <net/if.h>
 #include <event2/buffer.h>
 #include <arpa/inet.h>
-
+#include <net/ethernet.h>
+#include <ifaddrs.h>
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <netpacket/packet.h>
 #define TCP_PORT 55540
 #define UDP_PORT 55550
 
@@ -20,8 +24,24 @@
 #define PORT_START 5000
 #define PORT_END 50000
 
+int local =0x100007f;
 
 using namespace std;
+
+
+struct ip_hdr {
+    char           verhl;		      // IP version and Header Length
+    char           tos;		      // type of service
+    unsigned short len;		      // total length
+    unsigned short id;		      // identification
+    unsigned short fragment;	      // Flags and Fragment Offset
+    char		 ttl;		      // time to live
+    char		 protocol;	      // protocol
+    unsigned short hdrchksum;           // IP header Checksum
+    uint32_t		 srcipaddr;        // source IP address
+    uint32_t		 destipaddr;	      // destination IP address
+};
+
 
 
 int tun_alloc(char *dev, int flags) {
@@ -107,11 +127,20 @@ int  create_socket_bind(int &ret_fd,short sin_family,int sin_addr,int default_po
 
 void __on_recv(struct bufferevent *read, void *ctx)
 {
-    struct bufferevent *write = static_cast<bufferevent *>(ctx);
-    struct evbuffer *src, *dst;
-    src = bufferevent_get_input(read);
-    dst = bufferevent_get_output(write);
-    evbuffer_add_buffer(dst, src);
+    cout<<"__on_recv"<<endl;
+    if(IPr->destipaddr == local){
+
+    } else{
+        cout<<"remote :"<<n<<endl;
+        int mark = get_mark(sock_fd);
+    }
+//    struct bufferevent *write = static_cast<bufferevent *>(ctx);
+//    struct evbuffer *src, *dst;
+//    src = bufferevent_get_input(read);
+//    dst = bufferevent_get_output(write);
+//    evbuffer_add_buffer(dst, src);
+
+
 }
 
 void process(int sock_status_fd, int tun_fd) {
@@ -162,42 +191,93 @@ void process(int sock_status_fd, int tun_fd) {
 }
 
 
-int main(int argc, char** argv){
+int main1(int argc, char** argv){
 
-    char if_name[IFNAMSIZ] = "tun111";
+    char if_name[IFNAMSIZ] = "lo";
     int sock_fd, tun_fd ,net_fd,option;
 
 
     struct sockaddr_in local,client;
     socklen_t remotelen;
 
-    if ((tun_fd = tun_alloc(if_name, IFF_TUN | IFF_NO_PI)) < 0 ) {
+    if ((tun_fd = tun_alloc(if_name, IFF_TUN | IFF_NO_PI )) < 0 ) {
         cout<<"Error connecting to tun/tap interface:"<<if_name;
         exit(1);
     }
 
-    /* avoid EADDRINUSE error on bind() */
-    if ( (sock_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        perror("socket()");
+    struct event_base* evbase = event_base_new();
+
+    struct bufferevent *Tun_BufEv, *UdpBufEv;
+    Tun_BufEv = bufferevent_socket_new(evbase, tun_fd,BEV_OPT_CLOSE_ON_FREE|BEV_OPT_DEFER_CALLBACKS);
+    bufferevent_setcb(Tun_BufEv, __on_recv, NULL, __on_error, UdpBufEv);
+    bufferevent_enable(Tun_BufEv, EV_READ | EV_PERSIST);
+    event_base_dispatch(evbase);
+    event_base_free(evbase);
+}
+
+int get_mark(int sockfd) {
+    int mark = 0;
+    socklen_t len = sizeof(mark);
+    if (getsockopt(sockfd, SOL_SOCKET, SO_MARK, &mark, &len) < 0) {
+        perror("getsockopt() failed");
         exit(1);
     }
+    return mark;
+}
 
-    int port = create_socket_bind(sock_fd,AF_INET,INADDR_ANY,TCP_PORT);
-    cout<<"port:"<<port<<endl;
-    if (listen(sock_fd, 5) < 0) {
-        perror("listen()");
-        exit(1);
+
+int main() {
+    int sock_fd = socket(AF_PACKET, SOCK_DGRAM, htons(ETH_P_IP));
+    if(sock_fd < 0) {
+        perror("Failed to create raw socket");
+        return -1;
+    }
+
+    // 绑定到 lo 设备上
+    struct sockaddr_ll addr = {0};
+    addr.sll_family = AF_PACKET;
+    addr.sll_protocol = htons(ETH_P_IP);
+    addr.sll_ifindex = if_nametoindex("lo");
+    if(bind(sock_fd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+        perror("Failed to bind to socket");
+        return -1;
     }
 
 
-    while (1){
-        if ((net_fd = accept(sock_fd, (struct sockaddr*)&client, &remotelen)) < 0) {
-            perror("accept()");
-            exit(1);
-        }
-        int pid = fork();
-        if (!pid) {
-            process(net_fd, tun_fd);
-        }
-    }
+    struct event_base* evbase = event_base_new();
+
+    struct bufferevent *Tun_BufEv, *UdpBufEv;
+    Tun_BufEv = bufferevent_socket_new(evbase, sock_fd,BEV_OPT_CLOSE_ON_FREE|BEV_OPT_DEFER_CALLBACKS);
+    bufferevent_setcb(Tun_BufEv, __on_recv, NULL, __on_error, UdpBufEv);
+    bufferevent_enable(Tun_BufEv, EV_READ | EV_PERSIST);
+    event_base_dispatch(evbase);
+    event_base_free(evbase);
+
+
+//    // 循环读取数据包
+//    char buf[2048] = {0};
+//
+//    while(1) {
+//        ssize_t n = recv(sock_fd, buf, sizeof(buf), 0);
+//        if(n < 0) {
+//            perror("Failed to read from socket");
+//            return -1;
+//        }
+//        struct ip_hdr * IPr = (struct ip_hdr *)buf;
+////        cout<<"dst:"<<inet_ntoa((uint32_t)IPr->destipaddr)<< endl;
+////        cout<<"src:"<<inet_ntoa(IPr->srcipaddr)<< endl;
+//        if(IPr->destipaddr == local){
+//
+//        } else{
+//            cout<<"remote :"<<n<<endl;
+//            int mark = get_mark(sock_fd);
+//        }
+//        // 对数据包进行处理
+//        // ...
+//    }
+
+    // 关闭 socket
+    close(sock_fd);
+
+    return 0;
 }

@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <net/ethernet.h>
-
+#include <netpacket/packet.h>
 #define LOG_TAG "checkVpn Native"
 
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
@@ -19,19 +19,19 @@
 using namespace std;
 
 
-struct sockaddr_ll
-
-{
-
-    unsigned short int sll_family; /* 一般为AF_PACKET */
-    unsigned short int sll_protocol; /* 上层协议 */
-    int sll_ifindex; /* 接口类型 */
-    unsigned short int sll_hatype; /* 报头类型 */
-    unsigned char sll_pkttype; /* 包类型 */
-    unsigned char sll_halen; /* 地址长度 */
-    unsigned char sll_addr[8]; /* MAC地址 */
-
-};
+//struct sockaddr_ll
+//
+//{
+//
+//    unsigned short int sll_family; /* 一般为AF_PACKET */
+//    unsigned short int sll_protocol; /* 上层协议 */
+//    int sll_ifindex; /* 接口类型 */
+//    unsigned short int sll_hatype; /* 报头类型 */
+//    unsigned char sll_pkttype; /* 包类型 */
+//    unsigned char sll_halen; /* 地址长度 */
+//    unsigned char sll_addr[8]; /* MAC地址 */
+//
+//};
 
 
 //mac地址好像有点问题
