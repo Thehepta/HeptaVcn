@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -19,12 +21,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        try {
-            java_getNetWorkInfo();
-        } catch (SocketException e) {
-            throw new RuntimeException(e);
-        }
-        getifaddrs();
+        Button btn = this.findViewById(R.id.btn);
+//        hook_getifaddrs();
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //                    java_getNetWorkInfo();
+                Log.e("Rzx","-----------------------------------------------------------------");
+                net_us();
+                //                getifaddrs();
+            }
+        });
+
+
 //        getMac();
 //        getMac2();
     }
@@ -67,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public native  void  hook_getifaddrs();
+    public native  void  net_us();
     public native  void  getifaddrs();
     public native  void  getMac();
     public native  void  getMac2();

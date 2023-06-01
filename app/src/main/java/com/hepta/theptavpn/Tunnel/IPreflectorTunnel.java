@@ -3,6 +3,7 @@ package com.hepta.theptavpn.Tunnel;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
+import com.hepta.theptavpn.LocalVPNService;
 import com.hepta.theptavpn.ServerConfig;
 
 import java.io.IOException;
@@ -16,54 +17,38 @@ public class IPreflectorTunnel extends ProxyTunnel{
     private native int NativeStartVpn(int fd, String ipaddr, int port);
     private native void NativeStopVpn();
 
-    private ExecutorService executorService;
-    private boolean isrunning;
 
 
-    public IPreflectorTunnel(ServerConfig config, ParcelFileDescriptor fd){
-        super(config,fd);
-        executorService = Executors.newFixedThreadPool(5);
+    public IPreflectorTunnel(ServerConfig config, ParcelFileDescriptor fd, LocalVPNService localVPNService){
+        super(config,fd,localVPNService);
     }
 
 
 
     @Override
-    public Boolean start() {
+    public void start() {
         Thread runnable = new Thread() {
             @Override
             public void run() {
-                isrunning = true;
                 NativeStartVpn(NetInterface.getFd(),config.getIpaddr(),config.getPort());
-                isrunning = false;
+                localVPNService.getProxyBinder().updateRunStatus(false);
+                try {
+                    NetInterface.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         };
-
-        executorService.submit(runnable);
-        try {
-            Thread.currentThread().sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        executorService.shutdown();
-        return isrunning;
+        runnable.start();
     }
 
     @Override
     public void stop() {
-        Log.e("Rzx","stop");
         NativeStopVpn();
         try {
             NetInterface.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        try{
-            executorService.awaitTermination(1 , TimeUnit.SECONDS);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        Log.e("Rzx","stop end");
-
     }
 }

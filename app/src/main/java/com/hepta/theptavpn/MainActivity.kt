@@ -54,7 +54,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.e("Rzx","onCreate")
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
         title = getString(R.string.app_name)
@@ -87,7 +86,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding!!.navView.setNavigationItemSelectedListener(this)
         binding!!.version.text = BuildConfig.VERSION_NAME
         setupViewModel()
-        createNotification()
+//        createNotification()
 //        requestPermission()
     }
 
@@ -126,6 +125,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     private fun createNotification() {
+
         manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -144,6 +144,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .setColor(Color.parseColor("#ff0000")) //设置小图标颜色
             .setAutoCancel(false)
             .build()
+
+
+
     }
 
 
@@ -226,8 +229,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     fun stopVpnService() {
-        localVPNService?.stopVpnService()
-
+        localVPNService?.tunnel?.stop()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

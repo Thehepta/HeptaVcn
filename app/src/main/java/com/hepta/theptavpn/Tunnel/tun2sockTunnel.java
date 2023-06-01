@@ -2,6 +2,7 @@ package com.hepta.theptavpn.Tunnel;
 
 import android.os.ParcelFileDescriptor;
 
+import com.hepta.theptavpn.LocalVPNService;
 import com.hepta.theptavpn.ServerConfig;
 
 import engine.Key;
@@ -9,8 +10,8 @@ import engine.Key;
 public class tun2sockTunnel extends ProxyTunnel {
 
 
-    public tun2sockTunnel(ServerConfig config, ParcelFileDescriptor fd) {
-        super(config, fd);
+    public tun2sockTunnel(ServerConfig config, ParcelFileDescriptor fd, LocalVPNService localVPNService) {
+        super(config, fd ,localVPNService);
         String proxy = "";
 
         switch (config.getNetType()){
@@ -40,14 +41,14 @@ public class tun2sockTunnel extends ProxyTunnel {
     }
 
     @Override
-    public Boolean start() {
+    public void start() {
         engine.Engine.start();
-        return true;
     }
 
     @Override
     public void stop() {
         engine.Engine.stop();
+        localVPNService.getProxyBinder().updateRunStatus(false);
     }
 
 

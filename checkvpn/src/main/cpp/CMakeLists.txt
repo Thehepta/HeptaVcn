@@ -13,7 +13,11 @@ set (Tutorial_VERSION_MINOR 0)
 
 # add the executable
 
-#add_subdirectory(nativeloader)
+add_library(libdobby STATIC IMPORTED)
+set_target_properties(libdobby PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/libs/${ANDROID_ABI}/libdobby.a)
+
+add_subdirectory(getifaddrs)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 
 add_library( # Sets the name of the library.
         checkvpn
@@ -33,7 +37,7 @@ find_library( # Sets the name of the path variable.
 
 target_link_libraries( # Specifies the target library.
         checkvpn
-
+        libdobby
         ${log-lib})
 
 

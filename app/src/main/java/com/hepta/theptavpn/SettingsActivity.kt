@@ -29,6 +29,7 @@ class SettingsActivity : BaseActivity() {
         private val type by lazy { MmkvManager.getAllowType() }
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+            Log.e("Rzx","SettingsFragment onCreatePreferences")
 
             addPreferencesFromResource(R.xml.pref_settings)
             proxy_none?.setOnPreferenceChangeListener {_, any ->
@@ -116,13 +117,6 @@ class SettingsActivity : BaseActivity() {
                     true
                 }
             }
-        }
-
-        override fun onStart() {
-            super.onStart()
-            vpn_mtu?.setSummary(MmkvManager.getMtu().toString())
-            vpn_netmask?.setSummary(MmkvManager.getnetMask())
-            vpn_addr?.setSummary(MmkvManager.getAddress())
 
             when(type){
                 MmkvManager.KEY_APP_ALLWO_NONE->{
@@ -147,6 +141,14 @@ class SettingsActivity : BaseActivity() {
                     proxy_disall_list?.isEnabled=true
                 }
             }
+        }
+
+        override fun onStart() {
+            super.onStart()
+            Log.e("Rzx","SettingsFragment onStart")
+            vpn_mtu?.setSummary(MmkvManager.getMtu().toString())
+            vpn_netmask?.setSummary(MmkvManager.getnetMask())
+            vpn_addr?.setSummary(MmkvManager.getAddress())
 
         }
     }

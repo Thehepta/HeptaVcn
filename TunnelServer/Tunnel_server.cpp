@@ -165,10 +165,10 @@ void process(int sock_status_fd, int tun_fd) {
 int main(int argc, char** argv){
 
     char if_name[IFNAMSIZ] = "tun111";
-    int sock_fd, tun_fd ,net_fd,option;
+    int sock_fd, tun_fd ,net_fd;
 
 
-    struct sockaddr_in local,client;
+    struct sockaddr_in client;
     socklen_t remotelen;
 
     if ((tun_fd = tun_alloc(if_name, IFF_TUN | IFF_NO_PI)) < 0 ) {

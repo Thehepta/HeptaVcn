@@ -54,13 +54,6 @@ void hexDump(const unsigned char *data, size_t size)
 
 
 
-void *ThreadFun(void *tun_interface)
-{
-
-    ipReflect_start((intptr_t) tun_interface, nullptr, 0);
-    pthread_exit(0);
-}
-
 
 extern "C"
 JNIEXPORT int JNICALL
@@ -69,6 +62,7 @@ Java_com_hepta_theptavpn_Tunnel_IPreflectorTunnel_NativeStartVpn(JNIEnv *env, jo
 
     char * ipaddr_str = const_cast<char *>(env->GetStringUTFChars(ipaddr, NULL));
     int ret = ipReflect_start(interface, ipaddr_str, port);
+    ipReflect_stop();
     return ret;
 }
 

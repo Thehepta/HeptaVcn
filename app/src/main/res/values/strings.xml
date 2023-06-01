@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TheptaVACN</string>
+    <string name="app_name">TheptaVN</string>
     <string name="connection_test_pending">Check Connectivity</string>
     <string name="title_settings">Settings</string>
     <string name="title_logcat">LogCat</string>
@@ -28,8 +28,7 @@
     <string translatable="false" name="notify_channel_description">MyDefaultChannelDescription</string>
 
     <string name="title_pref_Debug_enabled">Enable Debug Log</string>
-    <string name="summary_pref_Debug_enabled">Display current speed in the notification.\nNotification icon would change based on
-        usage.</string>
+    <string name="summary_pref_Debug_enabled">Display current speed in the notification.\nNotification icon would change based onusage.</string>
     <string name="title_AppProxy_settings">Application Proxy Setting</string>
     <string name="title_pref_proxy_allow">addAllowedApplication</string>
     <string name="summary_pref_per_proxy_allow">white lis</string>

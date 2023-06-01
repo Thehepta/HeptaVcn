@@ -71,7 +71,6 @@ void __on_recv(struct bufferevent *read, void *ctx)
 }
 int ipReflect_stop(){
 
-//    return shutdown(tcp_control_sock_fd,SHUT_RDWR);
     return shutdown(tcp_control_sock_fd,SHUT_RDWR);
 }
 

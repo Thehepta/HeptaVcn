@@ -15,8 +15,8 @@ import java.net.UnknownHostException
 class LocalVPNService : VpnService() {
 
 
-    private var proxyBinder = LocalVPNService.ProxyBinder(this@LocalVPNService)
-    private var tunnel: ProxyTunnel? =null
+    public var proxyBinder = LocalVPNService.ProxyBinder(this@LocalVPNService)
+    public var tunnel: ProxyTunnel? =null
     public var Running: Boolean?=false
     private fun setupVPN(): ParcelFileDescriptor? {
         val ipaddr = MmkvManager.getAddress();
@@ -32,8 +32,7 @@ class LocalVPNService : VpnService() {
         } catch (e: UnknownHostException) {
             throw RuntimeException(e)
         }
-        val allow_type = MmkvManager.getAllowType()
-        when (allow_type) {
+        when (MmkvManager.getAllowType()) {
             MmkvManager.KEY_APP_ALLWO_NONE -> {
                 builder.addDisallowedApplication(packageName)
             }
@@ -58,26 +57,18 @@ class LocalVPNService : VpnService() {
     private fun getTunnelType(config: ServerConfig, parcelFileDescriptor: ParcelFileDescriptor): ProxyTunnel {
 
         if (config.netType == 0) {
-            return IPreflectorTunnel(config, parcelFileDescriptor)
+            return IPreflectorTunnel(config, parcelFileDescriptor,this)
         } else {
-            return tun2sockTunnel(config, parcelFileDescriptor)
+            return tun2sockTunnel(config, parcelFileDescriptor,this)
         }
-    }
-
-    public fun stopVpnService(){
-        tunnel?.stop()
-        proxyBinder.updateRunStatus(false);
     }
 
     public fun startVpnService(guid:String){
         val config = MmkvManager.decodeServerConfig(guid)
         setupVPN()?.let {
             tunnel = getTunnelType(config!!, it)
-            val run = tunnel?.start();
-            proxyBinder.updateRunStatus(run!!);
-            if(!run){
-                Log.e("Rzx","start vpn failed");
-            }
+            proxyBinder.updateRunStatus(true);
+            tunnel?.start();
         }
     }
 
@@ -87,9 +78,7 @@ class LocalVPNService : VpnService() {
     }
 
     public override fun onRevoke() {
-        Log.e("Rzx","onRevoke")
-        stopVpnService()
-        proxyBinder.updateRunStatus(false);
+        tunnel?.stop()
         super.onRevoke()
 
     }
