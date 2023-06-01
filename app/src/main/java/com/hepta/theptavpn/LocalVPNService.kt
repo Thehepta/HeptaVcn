@@ -41,12 +41,15 @@ class LocalVPNService : VpnService() {
                 val applist = MmkvManager.decodeApplicationList(MmkvManager.KEY_APP_ADD_ALLOW)
                 for (appPkg in applist) {
                     builder.addAllowedApplication(appPkg)
+                    Log.e("Rzx", "addAllowedApplication:$appPkg")
+
                 }
             }
             MmkvManager.KEY_APP_ADD_DIS_ALLOW -> {
                 builder.addDisallowedApplication(packageName)
                 val applist = MmkvManager.decodeApplicationList(MmkvManager.KEY_APP_ADD_DIS_ALLOW)
                 for (appPkg in applist) {
+                    Log.e("Rzx", "addDisallowedApplication:$appPkg")
                     builder.addDisallowedApplication(appPkg)
                 }
             }

@@ -118,7 +118,7 @@ object MmkvManager {
 
 
     fun getAddress():String{
-        return setStorage.decodeString("address","10.0.0.1")!!
+        return setStorage.decodeString("address","10.0.0.2")!!
 
     }
     fun setAddress(address:String) {
