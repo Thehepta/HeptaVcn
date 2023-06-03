@@ -35,16 +35,7 @@ add_library( # Sets the name of the library.
         SHARED
 
         # Provides a relative path to your source file(s).
-        Sock5Client.cpp
-        ThreadSafeQueue.cpp
-        Tcp.cpp
-        utils.cpp
-        Udp.cpp
-        Icmp.cpp
-        Tcb.cpp
-        IP.cpp
         ipReflect.cpp
-        ProxyServer.cpp
         entry.cpp)
 
 # Searches for a specified prebuilt library and stores the path as a

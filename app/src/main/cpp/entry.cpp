@@ -6,54 +6,11 @@
 #include "event2/bufferevent.h"
 #include "event2/buffer.h"
 #include "arpa/inet.h"
-#include "Sock5Client.h"
-#include "IP.h"
-#include "Config.h"
 #include "ipReflect.h"
 
 #define LOG_TAG "theptavpn"
 
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
-
-// 内存查看
-void hexDump(const unsigned char *data, size_t size)
-{
-    int i;
-    size_t offset = 0;
-    while (offset < size)
-    {
-        LOGE("%04x  ", offset);
-        for (i=0; i<16; i++)
-        {
-            if (i%8 == 0) putchar(' ');
-            if (offset+i < size)
-            {
-                LOGE("%02x ", data[offset + i]);
-            }
-            else
-            {
-                LOGE("   ");
-            }
-        }
-        LOGE("   ");
-        for (i=0; i<16 && offset+i<size; i++)
-        {
-            if (isprint(data[offset+i]))
-            {
-                LOGE("%c", data[offset+i]);
-            }
-            else
-            {
-                putchar('.');
-            }
-        }
-        putchar('\n');
-        offset += 16;
-    }
-}
-
-
-
 
 extern "C"
 JNIEXPORT int JNICALL

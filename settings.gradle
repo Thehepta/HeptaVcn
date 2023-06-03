@@ -17,6 +17,6 @@ dependencyResolutionManagement {
 
     }
 }
-rootProject.name = "TheptaVpn"
+rootProject.name = "HeptaVpn"
 include ':app'
 include ':checkvpn'

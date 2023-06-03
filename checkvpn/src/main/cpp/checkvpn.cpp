@@ -12,8 +12,10 @@
 #include <sys/socket.h>
 #include <net/ethernet.h>
 #include <netpacket/packet.h>
-#include "dobby.h"
 #include <linux/rtnetlink.h>
+#include <dlfcn.h>
+//#include "hookvpn/hookvpn.h"
+#include "solist/solist.h"
 #define LOG_TAG "checkVpn Native"
 
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
@@ -187,17 +189,6 @@ Java_com_hepta_checkvpn_MainActivity_getMac2(JNIEnv *env, jobject thiz) {
 
     LOGE("MAC address: %02x:%02x:%02x:%02x:%02x:%02x\n",
          mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5]);
-}
-
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_hepta_checkvpn_MainActivity_hook_1getifaddrs(JNIEnv *env, jobject thiz) {
-    // TODO: implement hook_getifaddrs()
-
-    void*getifaddrs  = DobbySymbolResolver(nullptr, "getifaddrs");
-    DobbyHook(getifaddrs, (void*)getifaddrs_hook,reinterpret_cast<dobby_dummy_func_t *>(&getifaddrs_org));
-    LOGE("getifaddrs %p",getifaddrs);
 }
 
 
@@ -453,6 +444,14 @@ bool ReadResponses(void callback(void*, nlmsghdr*), void* context) {
 }
 
 
+void *symlistFun(void *arg){
+    text();
+
+
+
+
+    return nullptr;
+}
 
 
 
@@ -508,5 +507,12 @@ Java_com_hepta_checkvpn_MainActivity_net_1us(JNIEnv *env, jobject thiz) {
 
         LOGE("\n");
     }
+
+//    hook_start();
+
+
+    pthread_t tid;
+    pthread_create(&tid, nullptr,symlistFun, nullptr);
+
 
 }

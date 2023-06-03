@@ -12,21 +12,15 @@ set (Tutorial_VERSION_MINOR 0)
 # so that we will find TutorialConfig.h
 
 # add the executable
-
-#add_library(libdobby STATIC IMPORTED)
-#set_target_properties(libdobby PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/libs/${ANDROID_ABI}/libdobby.a)
-
-add_subdirectory(getifaddrs)
-add_subdirectory(solist)
-add_subdirectory(hookvpn)
-include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/)
 
 add_library( # Sets the name of the library.
-        checkvpn
+        solist
         # Sets the library as a shared library.
         SHARED
         # Provides a relative path to your source file(s).
-        checkvpn.cpp)
+        solist.cpp
+        elf_symbol_resolver.cpp)
 
 # in android studio build.gradle
 
@@ -38,10 +32,7 @@ find_library( # Sets the name of the path variable.
         log )
 
 target_link_libraries( # Specifies the target library.
-        checkvpn
-#        hookvpn
         solist
-#        libdobby
         ${log-lib})
 
 

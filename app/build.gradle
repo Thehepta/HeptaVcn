@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.hepta.theptavpn'
+    namespace 'com.hepta.vcn'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.hepta.theptavpn"
+        applicationId "com.hepta.vcn"
         minSdk 21
         targetSdk 31
         versionCode 1

@@ -14,10 +14,10 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_v_round"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name=".TheptaVapApp"
+        android:name=".HeptaVcn"
         android:extractNativeLibs="true"
         android:theme="@style/AppThemeDayNight"
         tools:targetApi="31">

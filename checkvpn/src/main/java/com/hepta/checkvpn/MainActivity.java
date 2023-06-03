@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public native  void  hook_getifaddrs();
+
     public native  void  net_us();
     public native  void  getifaddrs();
     public native  void  getMac();

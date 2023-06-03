@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TheptaVN</string>
+    <string name="app_name">HeptaVcn</string>
     <string name="connection_test_pending">Check Connectivity</string>
     <string name="title_settings">Settings</string>
     <string name="title_logcat">LogCat</string>
