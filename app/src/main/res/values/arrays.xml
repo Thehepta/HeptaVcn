@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="nettype" translatable="false">
-        <item>IP-Reflector</item>
+        <item>IPacket-Forward</item>
         <item>SOCKS5</item>
         <item>HTTP-PROXY</item>
 

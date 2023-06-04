@@ -237,7 +237,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 startActivity(Intent(this, SettingsActivity::class.java))
             }
             R.id.about -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
+                startActivity(Intent(this, aboutActivity::class.java))
             }
             R.id.help -> {
                 startActivity(Intent(this, helpActivity::class.java))

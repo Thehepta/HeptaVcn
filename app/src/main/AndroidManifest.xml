@@ -41,6 +41,8 @@
         </activity>
         <activity
             android:name=".helpActivity" />
+        <activity
+            android:name=".aboutActivity" />
         <service
             android:name=".LocalVPNService"
             android:enabled="true"
