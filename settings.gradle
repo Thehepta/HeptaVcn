@@ -17,5 +17,5 @@ dependencyResolutionManagement {
 
     }
 }
-rootProject.name = "HeptaVpn"
+rootProject.name = "HeptaVcn"
 include ':app'

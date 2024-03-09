@@ -10,7 +10,7 @@ object MmkvManager {
     const val ID_SERVER_CONFIG = "SERVER_CONFIG"
     const val ID_SERVER_RAW = "SERVER_RAW"
     const val ID_SERVER_AFF = "SERVER_AFF"
-    const val ID_SETTING = "SETTING"
+    const val ID_MODULE = "MODULE"
     const val KEY_SELECTED_SERVER = "SELECTED_SERVER"
     const val KEY_ANG_CONFIGS = "ANG_CONFIGS"
 
@@ -25,7 +25,7 @@ object MmkvManager {
     private val mainStorage by lazy { MMKV.mmkvWithID(ID_MAIN, MMKV.MULTI_PROCESS_MODE) }
     private val serverStorage by lazy { MMKV.mmkvWithID(ID_SERVER_CONFIG, MMKV.MULTI_PROCESS_MODE) }
     private val serverAffStorage by lazy { MMKV.mmkvWithID(ID_SERVER_AFF, MMKV.MULTI_PROCESS_MODE) }
-    private val setStorage by lazy { MMKV.mmkvWithID(ID_SETTING, MMKV.MULTI_PROCESS_MODE) }
+    private val setModule by lazy { MMKV.mmkvWithID(ID_MODULE, MMKV.MULTI_PROCESS_MODE) }
 
 
     fun decodeServerList(): MutableList<String> {
@@ -88,9 +88,9 @@ object MmkvManager {
 
     fun decodeApplicationList(type: Int): MutableList<String> {
         val json = if (type==KEY_APP_ADD_ALLOW){
-            setStorage?.decodeString(KEY_APP_ADD_ALLOW_LIST)
+            setModule?.decodeString(KEY_APP_ADD_ALLOW_LIST)
         }else{
-            setStorage?.decodeString(KEY_APP_ADD_DIS_ALLOW_LIST)
+            setModule?.decodeString(KEY_APP_ADD_DIS_ALLOW_LIST)
         }
         return if (json.isNullOrBlank()) {
             mutableListOf()
@@ -102,42 +102,42 @@ object MmkvManager {
     fun encodeApplicationList( list :MutableList<String>,type: Int) {
         val json = Gson().toJson(list)
         if (type==KEY_APP_ADD_ALLOW){
-            setStorage?.encode(KEY_APP_ADD_ALLOW_LIST,json)
+            setModule?.encode(KEY_APP_ADD_ALLOW_LIST,json)
         }else{
-            setStorage?.encode(KEY_APP_ADD_DIS_ALLOW_LIST,json)
+            setModule?.encode(KEY_APP_ADD_DIS_ALLOW_LIST,json)
         }
     }
 
     fun getAllowType() :Int {
-        return setStorage.decodeInt("Type",0)
+        return setModule.decodeInt("Type",0)
     }
 
     fun setAllowType(type:Int) {
-        setStorage.encode("Type", type)
+        setModule.encode("Type", type)
     }
 
 
     fun getAddress():String{
-        return setStorage.decodeString("address","10.0.0.2")!!
+        return setModule.decodeString("address","10.0.0.2")!!
 
     }
     fun setAddress(address:String) {
-        setStorage.encode("address",address)
+        setModule.encode("address",address)
     }
 
     fun getnetMask():String{
-        return setStorage.decodeString("netmask","255.255.255.252")!!
+        return setModule.decodeString("netmask","255.255.255.252")!!
 
     }
     fun setnetMask(address:String) {
-        setStorage.encode("netmask",address)
+        setModule.encode("netmask",address)
     }
 
     fun getMtu():Int{
-        return setStorage.decodeInt("mtu",1400)!!
+        return setModule.decodeInt("mtu",1400)!!
 
     }
     fun setMtu(Mtu:Int) {
-        setStorage.encode("mtu",Mtu)
+        setModule.encode("mtu",Mtu)
     }
 }

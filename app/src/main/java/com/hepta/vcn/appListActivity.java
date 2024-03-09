@@ -70,6 +70,7 @@ public class appListActivity extends BaseActivity {
         intent.setAction(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         PackageManager mPm = getPackageManager();
+
         //set MATCH_ALL to prevent any filtering of the results
         List<ResolveInfo> resolveInfos = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_ALL);
         for (ResolveInfo info: resolveInfos) {
