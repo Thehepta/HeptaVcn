@@ -48,6 +48,10 @@ sudo ifconfig tun111 mtu 1400 up
 这个工具好像有点问题，需要手工想证书的路径复制到系统证书路径
 
 
+### 测试
+提供了一个app测试程序，会向百度发送https请求,用于对https证书配置环境进行测试
+
+
 然后直接抓pc端的网卡就可以了。
 # 致谢
 https://github.com/xjasonlyu/tun2socks
