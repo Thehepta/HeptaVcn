@@ -6,14 +6,32 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/proxytest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/proxyhttp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="http" />
+        <Button
+            android:id="@+id/proxyhttps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="https" />
+        <Button
+            android:id="@+id/travecert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="travecert" />
+
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
