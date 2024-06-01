@@ -139,7 +139,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         note = NotificationCompat.Builder(this, "ShadyPi")
             .setContentTitle("Thepta Application Capture Packet")
             .setContentText("running").setContentIntent(pending)
-            .setSmallIcon(R.drawable.ic_launcher_foreground).setOngoing(true)
+            .setSmallIcon(R.mipmap.ic_launcher_foreground).setOngoing(true)
             .setColor(Color.parseColor("#ff0000")) //设置小图标颜色
             .setAutoCancel(false)
             .build()
