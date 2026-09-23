@@ -48,21 +48,24 @@ static void write_int(int fd, int val) {
 
 
 void __on_error(struct bufferevent *bev, short what, void *ctx) {
-    LOGE("Tunnel __on_error");
-    event_base_loopbreak(evbase);
+    int err = EVUTIL_SOCKET_ERROR();
+    LOGE("__on_error: what=0x%x errno=%d(%s) bev=%p ctx=%p fd=%d",
+         what, err, evutil_socket_error_to_string(err),
+         bev, ctx, bufferevent_getfd(bev));
+//    event_base_loopbreak(evbase);
 
 }
 
 
 void __on_tcp_error(evutil_socket_t sockfd, short event, void* arg) {
     LOGE("__on_tcp_error");
-    event_base_loopbreak(evbase);
+//    event_base_loopbreak(evbase);
 }
 
 
 void __on_recv(struct bufferevent *read, void *ctx)
 {
-    LOGE("__on_recv");
+//    LOGE("__on_recv");
     struct bufferevent *write = static_cast<bufferevent *>(ctx);
     struct evbuffer *src, *dst;
     src = bufferevent_get_input(read);

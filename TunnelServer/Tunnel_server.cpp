@@ -61,10 +61,11 @@ int tun_alloc(char *dev, int flags) {
 void __on_error(evutil_socket_t sockfd, short event, void* arg) {
 
     cout<<"__on_error"<< event<<endl;
-    exit(0);
+    // exit(0);
 }
-void __on_error(struct bufferevent *bev, short what, void *ctx) {
-
+void __on_tcp_error(struct bufferevent *bev, short what, void *ctx) {
+    
+    cout<<"__on_tcp_error"<< what<<endl;
 }
 
 
@@ -147,9 +148,10 @@ void process(int sock_status_fd, int tun_fd) {
     Tun_BufEv = bufferevent_socket_new(evbase, tun_fd,
                                       BEV_OPT_CLOSE_ON_FREE|BEV_OPT_DEFER_CALLBACKS);
 
-    bufferevent_setcb(UdpBufEv, __on_recv, NULL, __on_error, Tun_BufEv);
-    bufferevent_setcb(Tun_BufEv, __on_recv, NULL, __on_error, UdpBufEv);
-    ev_tcp = event_new(evbase, sock_status_fd, EV_CLOSED, __on_error, nullptr);
+    bufferevent_setcb(UdpBufEv, __on_recv, NULL, reinterpret_cast<bufferevent_event_cb>(__on_error), Tun_BufEv);
+    bufferevent_setcb(Tun_BufEv, __on_recv, NULL, reinterpret_cast<bufferevent_event_cb>(__on_error), UdpBufEv);
+    
+    ev_tcp = event_new(evbase, sock_status_fd, EV_CLOSED, reinterpret_cast<event_callback_fn>(__on_tcp_error), nullptr);
 
     bufferevent_enable(UdpBufEv, EV_READ | EV_PERSIST);
     bufferevent_enable(Tun_BufEv, EV_READ | EV_PERSIST);

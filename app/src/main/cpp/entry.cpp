@@ -14,7 +14,7 @@
 
 extern "C"
 JNIEXPORT int JNICALL
-Java_com_hepta_theptavpn_Tunnel_IPreflectorTunnel_NativeStartVpn(JNIEnv *env, jobject thiz, int interface, jstring ipaddr,int port) {
+Java_com_hepta_vcn_Tunnel_IPreflectorTunnel_NativeStartVpn(JNIEnv *env, jobject thiz, int interface, jstring ipaddr,int port) {
     // TODO: implement setTunFd()
 
     char * ipaddr_str = const_cast<char *>(env->GetStringUTFChars(ipaddr, NULL));
@@ -25,7 +25,7 @@ Java_com_hepta_theptavpn_Tunnel_IPreflectorTunnel_NativeStartVpn(JNIEnv *env, jo
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_hepta_theptavpn_Tunnel_IPreflectorTunnel_NativeStopVpn(JNIEnv *env, jobject thiz) {
+Java_com_hepta_vcn_Tunnel_IPreflectorTunnel_NativeStopVpn(JNIEnv *env, jobject thiz) {
 
     ipReflect_stop();
 
